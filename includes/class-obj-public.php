@@ -45,7 +45,7 @@ class Obj_Gmaps_Public {
 
         ob_start();
 
-        echo '<div id="obj-google-maps"></div>';
+        echo '<div id="obj-google-maps" style="height: 400px;"></div>';
 
         return ob_get_clean();
 
