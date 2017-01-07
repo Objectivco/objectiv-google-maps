@@ -19,4 +19,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once( 'includes/class-obj-admin.php' );
 
 global $obj_admin;
-$obj_admin = new Obj_Gmaps_Admin();
+$obj_admin = new Obj_Gmaps_Admin( __FILE__ );
