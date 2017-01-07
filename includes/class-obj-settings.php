@@ -63,7 +63,7 @@ class Obj_Gmaps_Settings {
 							<h3>Google Maps Plugin</h3>
 							<p>Create searchable post types on a Google Map.</p>
 							<p><strong>Version:</strong> <?php echo $this->version; ?></p>
-							<h3>Resources</h3>
+							<!-- <h3>Resources</h3>
 							<ul>
 								<li>
 									<a href="#">Help</a>
@@ -71,7 +71,7 @@ class Obj_Gmaps_Settings {
 								<li>
 									<a href="#">Knowledge Base</a>
 								</li>
-							</ul>
+							</ul> -->
 						</div>
 					</div>
 				</aside>
