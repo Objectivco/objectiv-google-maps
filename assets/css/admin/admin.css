@@ -1,0 +1,33 @@
+.obj-settings-page {
+    clear: both;
+    margin-right: 300px;
+    margin-top: 2em;
+}
+
+.obj-settings-page__content {
+    float: left;
+    width: 100%;
+}
+
+.obj-settings-page__sidebar {
+    float: right;
+    margin-right: -300px;
+    width: 280px;
+}
+
+.obj-settings-page__sidebar-box {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+}
+
+.obj-settings-page__box-wrap {
+    padding: 1.5em;
+}
+
+.obj-settings-page__box-wrap > h2 {
+    margin-top: 0;
+}
+
+.obj-settings-page__box-wrap > ul {
+    margin-bottom: 0;
+}
