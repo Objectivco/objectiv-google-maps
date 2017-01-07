@@ -16,9 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$version = 1.0;
+
 require_once( 'includes/class-obj-admin.php' );
 require_once( 'includes/class-obj-settings.php' );
+require_once( 'includes/class-obj-public.php' );
+require_once( 'includes/obj-functions.php' );
 
-global $obj_admin, $obj_settings;
+global $obj_admin, $obj_settings, $obj_public;
 $obj_admin = new Obj_Gmaps_Admin( __FILE__ );
 $obj_settings = new Obj_Gmaps_Settings();
+$obj_public = new Obj_Gmaps_Public( __FILE__, $version );
