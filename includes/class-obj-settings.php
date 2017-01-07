@@ -35,7 +35,7 @@ class Obj_Gmaps_Settings {
     public function add_settings_page() {
         add_submenu_page(
             'options-general.php',
-            __( 'Google Map Settings', 'obj-google-maps' ),
+            __( 'Google Maps Settings', 'obj-google-maps' ),
             __( 'Google Maps', 'obj-google-maps' ),
             'manage_options',
             'obj_google_map_settings',
