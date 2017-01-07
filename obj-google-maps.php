@@ -15,3 +15,7 @@ Domain Path: /languages
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+require_once( 'includes/class-obj-admin.php' );
+
+global $obj_admin;
