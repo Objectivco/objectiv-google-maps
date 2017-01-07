@@ -20,8 +20,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-js": "browserify -t [ babelify --presets [ es2015 react ] ] assets/js/src/main.js -o assets/js/build/main.js",
-    "watch-js": "watchify -t [ babelify --presets [ es2015 react ] ] assets/js/src/main.js -o assets/js/build/main.js"
+    "build-js": "browserify -t [ babelify --presets [ es2015 ] ] assets/js/src/main.js -o assets/js/build/main.js",
+    "watch-js": "watchify -t [ babelify --presets [ es2015 ] ] assets/js/src/main.js -o assets/js/build/main.js"
   },
   "browser": {
     "vue": "vue/dist/vue.common"
