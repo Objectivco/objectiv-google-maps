@@ -25,5 +25,5 @@ require_once( 'includes/obj-functions.php' );
 
 global $obj_admin, $obj_settings, $obj_public;
 $obj_admin = new Obj_Gmaps_Admin( __FILE__ );
-$obj_settings = new Obj_Gmaps_Settings();
+$obj_settings = new Obj_Gmaps_Settings( __FILE__, $version );
 $obj_public = new Obj_Gmaps_Public( __FILE__, $version );
