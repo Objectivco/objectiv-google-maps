@@ -24,8 +24,22 @@
     padding: 1.5em;
 }
 
+.obj-settings-page__box-wrap img {
+    display: block;
+    width: 125px;
+}
+
 .obj-settings-page__box-wrap > h2 {
     margin-top: 0;
+}
+
+.obj-settings-page__box-wrap > h3 {
+    margin-bottom: 0;
+}
+
+.obj-settings-page__box-wrap > p,
+.obj-settings-page__box-wrap > ul {
+    margin-top: 0.25em;
 }
 
 .obj-settings-page__box-wrap > ul {

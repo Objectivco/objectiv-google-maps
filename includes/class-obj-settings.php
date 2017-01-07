@@ -59,10 +59,10 @@ class Obj_Gmaps_Settings {
 				<aside class="obj-settings-page__sidebar">
 					<div class="obj-settings-page__sidebar-box">
 						<div class="obj-settings-page__box-wrap">
-							<h2>Objectiv</h2>
+							<a href="http://objectiv.co" target="_blank"><img src="<?php echo plugins_url( '/assets/images/objectiv-logo.png', $this->file ); ?>" /></a>
 							<h3>Google Maps Plugin</h3>
 							<p>Create searchable post types on a Google Map.</p>
-							<p>Version: <?php echo $this->version; ?></p>
+							<p><strong>Version:</strong> <?php echo $this->version; ?></p>
 							<h3>Resources</h3>
 							<ul>
 								<li>
