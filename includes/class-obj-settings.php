@@ -185,7 +185,7 @@ class Obj_Gmaps_Settings {
 	 * @since 1.0
 	 */
 	public function settings_section( $section ) {
-		$html = '<p>Section</p>';
+		$html = '';
 
 		echo $html;
 	}
@@ -223,13 +223,14 @@ class Obj_Gmaps_Settings {
 			break;
 
 			case 'select':
-				$selected = false;
-				if ( $key == $data ) {
-					$selected = true;
-				}
 
 				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
 					foreach( $field['options'] as $key => $value ) {
+						$selected = false;
+						if ( $key == $data ) {
+							$selected = true;
+						}
+
 						$html .= '<option ' . selected( $selected, true, false ) . 'value="' . esc_attr( $key ) . '">' . esc_html( $value ) . 	'</option>';
 					}
 				$html .= '</select>';
