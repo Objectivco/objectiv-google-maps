@@ -8,12 +8,13 @@ var _googleMaps2 = _interopRequireDefault(_googleMaps);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _googleMaps2.default.KEY = data.apiKey;
+console.log(data);
 
 _googleMaps2.default.load(function (google) {
     var el = document.getElementById('obj-google-maps');
     var latlng = new google.maps.LatLng(-34.397, 150.644);
     var options = {
-        zoom: 4,
+        zoom: parseInt(data.mapZoom),
         mapTypeId: data.mapType
     };
 

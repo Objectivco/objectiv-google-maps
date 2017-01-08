@@ -99,6 +99,29 @@ class Obj_Gmaps_Settings {
 			'terrain'	=> 'Terrain'
 		);
 
+		$zoom_options = array(
+			1	=> 1,
+			2	=> 2,
+			3	=> 3,
+			4	=> 4,
+			5	=> 5,
+			6	=> 6,
+			7	=> 7,
+			8	=> 8,
+			9	=> 9,
+			10	=> 10,
+			11	=> 11,
+			12	=> 12,
+			13	=> 13,
+			14	=> 14,
+			15	=> 15,
+			16	=> 16,
+			17	=> 17,
+			18	=> 18,
+			19	=> 19,
+			20	=> 20
+		);
+
 		$settings = array();
 
 		$settings['general'] = array(
@@ -139,6 +162,14 @@ class Obj_Gmaps_Settings {
 					'placeholder'	=> __( 'Enter an address', 'obj-google-maps' ),
 					'class'	=> 'regular-text',
 					'callback'	=> 'wp_strip_all_tags'
+				),
+				array(
+					'id'	=> 'map_zoom',
+					'label'	=> __( 'Map Zoom', 'obj-google-maps' ),
+					'description'	=> __( 'Select the zoom level for the map', 'obj-google-maps' ),
+					'type'	=> 'select',
+					'options'	=> $zoom_options,
+					'default'	=> '8'
 				),
 				array(
 					'id'	=> 'api_key',

@@ -63,7 +63,8 @@ class Obj_Gmaps_Public {
 		$data_array = array(
 			'apiKey'	=> get_option( 'obj_api_key' ),
 			'mapType'	=> get_option( 'obj_map_type' ),
-			'mapCenter'	=> get_option( 'obj_map_center' )
+			'mapCenter'	=> get_option( 'obj_map_center' ),
+			'mapZoom'	=> get_option( 'obj_map_zoom' )
 		);
 
         if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {

@@ -1,12 +1,13 @@
 import GoogleMapsLoader from 'google-maps';
 
 GoogleMapsLoader.KEY = data.apiKey;
+console.log(data);
 
 GoogleMapsLoader.load((google) => {
     const el = document.getElementById('obj-google-maps');
     const latlng = new google.maps.LatLng(-34.397, 150.644);
     const options = {
-        zoom: 4,
+        zoom: parseInt(data.mapZoom),
         mapTypeId: data.mapType
     };
 
