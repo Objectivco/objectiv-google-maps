@@ -130,6 +130,15 @@ class Obj_Gmaps_Settings {
 					'placeholder'	=> __( '400px', 'obj-google-maps' ),
 					'class'	=> 'regular-text',
 					'callback'	=> 'wp_strip_all_tags'
+				),
+				array(
+					'id'	=> 'map_center',
+					'label'	=> __( 'Map Center', 'obj-google-maps' ),
+					'description'	=> __( 'Enter the address that you want to center the map on.', 'obj-google-maps' ),
+					'type'	=> 'autocomplete',
+					'placeholder'	=> __( 'Enter an address', 'obj-google-maps' ),
+					'class'	=> 'regular-text',
+					'callback'	=> 'wp_strip_all_tags'
 				)
 			)
 		);
@@ -246,6 +255,10 @@ class Obj_Gmaps_Settings {
 			case 'password':
 			case 'number':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '" />' . "\n";
+			break;
+
+			case 'autocomplete':
+				$html .= '<input id="' . esc_attr( $field['type'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
 			break;
 
 			case 'select':

@@ -21,9 +21,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify -t [ babelify --presets [ es2015 ] ] assets/js/src/main.js -o assets/js/build/main.js",
-    "watch": "watchify -t [ babelify --presets [ es2015 ] ] assets/js/src/main.js -o assets/js/build/main.js"
-  },
-  "browser": {
-    "vue": "vue/dist/vue.common"
+    "watch": "watchify -t [ babelify --presets [ es2015 ] ] assets/js/src/main.js -o assets/js/build/main.js",
+    "build-admin": "browserify -t [ babelify --presets [ es2015 ] ] assets/js/admin/src/main.js -o assets/js/admin/build/main.js",
+    "watch-admin": "watchify -t [ babelify --presets [ es2015 ] ] assets/js/admin/src/main.js -o assets/js/admin/build/main.js"
   }
 }
