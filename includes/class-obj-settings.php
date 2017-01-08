@@ -139,14 +139,7 @@ class Obj_Gmaps_Settings {
 					'placeholder'	=> __( 'Enter an address', 'obj-google-maps' ),
 					'class'	=> 'regular-text',
 					'callback'	=> 'wp_strip_all_tags'
-				)
-			)
-		);
-
-		$settings['settings'] = array(
-			'title'	=> __( 'Settings', 'obj-google-maps' ),
-			'description' => __( '', 'obj-google-maps' ),
-			'fields'	=> array(
+				),
 				array(
 					'id'	=> 'api_key',
 					'label'	=> __( 'Google API Key', 'obj-google-maps' ),
@@ -287,47 +280,11 @@ class Obj_Gmaps_Settings {
      */
     public function settings_page_markup() {
 
-		$tabs = '';
-		$tab = 'general';
-		if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
-			$tab = $_GET['tab'];
-		}
-
-		if ( is_array( $this->settings ) ) {
-			$tabs .= '<h2 class="nav-tab-wrapper">' . "\n";
-			foreach ( $this->settings as $section => $data ) {
-				// Set tab class
-				$class = 'nav-tab';
-				if ( ! isset( $_GET['tab'] ) ) {
-					if ( 0 == $c ) {
-						$class .= ' nav-tab-active';
-					}
-				} else {
-					if ( isset( $_GET['tab'] ) && $section == $_GET['tab'] ) {
-						$class .= ' nav-tab-active';
-					}
-				}
-				// Set tab link
-				$tab_link = add_query_arg( array( 'tab' => $section ) );
-				if ( isset( $_GET['settings-updated'] ) ) {
-					$tab_link = remove_query_arg( 'settings-updated', $tab_link );
-				}
-				if ( isset( $_GET['feed-series'] ) ) {
-					$tab_link = remove_query_arg( 'feed-series', $tab_link );
-				}
-				// Output tab
-				$tabs .= '<a href="' . esc_url( $tab_link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $data['title'] ) . '</a>' . "\n";
-				++$c;
-			}
-			$tabs .= '</h2>' . "\n";
-		}
-
 		?>
         <div class="wrap">
             <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 			<div class="obj-settings-page">
 				<main class="obj-settings-page__content">
-					<?php echo $tabs; ?>
 					<form method="post" action="options.php" enctype="multipart/form-data">
 						<?php
 						settings_fields( $this->settings_slug );

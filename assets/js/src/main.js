@@ -1,15 +1,20 @@
 import GoogleMapsLoader from 'google-maps';
 
-GoogleMapsLoader.KEY = data.api_key;
+GoogleMapsLoader.KEY = data.apiKey;
 
 GoogleMapsLoader.load((google) => {
-    let uluru = {lat: -25.363, lng: 131.044};
     const el = document.getElementById('obj-google-maps');
+    const latlng = new google.maps.LatLng(-34.397, 150.644);
     const options = {
         zoom: 4,
-        center: uluru,
-        mapTypeId: data.map_type
+        mapTypeId: data.mapType
     };
 
-    new google.maps.Map(el, options)
+    let geocoder = new google.maps.Geocoder();
+    geocoder.geocode( { 'address': data.mapCenter }, function(results, status) {
+        if (status == 'OK') {
+            options.center = results[0].geometry.location;
+            const map = new google.maps.Map(el, options);
+        }
+    });
 });
