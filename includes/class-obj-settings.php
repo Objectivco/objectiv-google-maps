@@ -83,6 +83,7 @@ class Obj_Gmaps_Settings {
 
 		global $wp_post_types;
 		$post_type_options = array();
+		$map_types = array();
 
 		foreach( $wp_post_types as $post_type => $data ) {
 			if ( in_array( $post_type, array( 'page', 'attachment', 'revision', 'nav_menu_item', 'wooframework', 'custom_css', 'customize_changeset', 'customize' ) ) ){
@@ -90,6 +91,13 @@ class Obj_Gmaps_Settings {
 			}
 			$post_type_options[ $post_type ] = $data->labels->name;
 		}
+
+		$map_types = array(
+			'roadmap'	=> 'Road Map',
+			'satellite'	=> 'Satellite',
+			'hybrid'	=> 'Hybrid',
+			'terrain'	=> 'Terrain'
+		);
 
 		$settings = array();
 
@@ -104,6 +112,24 @@ class Obj_Gmaps_Settings {
 					'type'	=> 'select',
 					'options'	=> $post_type_options,
 					'default'	=> ''
+				),
+				array(
+					'id'	=> 'map_type',
+					'label'	=> __( 'Map Type', 'obj-google-maps' ),
+					'description'	=> __( 'Select which type of map you would like to display', 'obj-google-maps' ),
+					'type'	=> 'select',
+					'options'	=> $map_types,
+					'default'	=> 'roadmap'
+				),
+				array(
+					'id'	=> 'map_center',
+					'label'	=> __( 'Map Center', 'obj-google-maps' ),
+					'description'	=> __( 'Define the height of the map in pixels.', 'obj-google-maps' ),
+					'type'	=> 'text',
+					'default'	=> '400px',
+					'placeholder'	=> __( '400px', 'obj-google-maps' ),
+					'class'	=> 'regular-text',
+					'callback'	=> 'wp_strip_all_tags'
 				)
 			)
 		);

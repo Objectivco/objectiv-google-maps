@@ -7,7 +7,8 @@ GoogleMapsLoader.load((google) => {
     const el = document.getElementById('obj-google-maps');
     const options = {
         zoom: 4,
-        center: uluru
+        center: uluru,
+        mapTypeId: data.map_type
     };
 
     new google.maps.Map(el, options)

@@ -59,7 +59,8 @@ class Obj_Gmaps_Public {
     public function enqueue_js() {
 
 		$data_array = array(
-			'api_key'	=> get_option( 'obj_api_key' )
+			'api_key'	=> get_option( 'obj_api_key' ),
+			'map_type'	=> get_option( 'obj_map_type' )
 		);
 
         if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {

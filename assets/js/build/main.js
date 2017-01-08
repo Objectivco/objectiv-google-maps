@@ -14,7 +14,8 @@ _googleMaps2.default.load(function (google) {
     var el = document.getElementById('obj-google-maps');
     var options = {
         zoom: 4,
-        center: uluru
+        center: uluru,
+        mapTypeId: data.map_type
     };
 
     new google.maps.Map(el, options);
