@@ -43,9 +43,11 @@ class Obj_Gmaps_Public {
      */
     public function map_shortcode_markup() {
 
+		$height = get_option( 'obj_map_height' );
+
         ob_start();
 
-        echo '<div id="obj-google-maps" style="height: 400px;"></div>';
+        echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
 
         return ob_get_clean();
 

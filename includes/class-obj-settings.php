@@ -122,8 +122,8 @@ class Obj_Gmaps_Settings {
 					'default'	=> 'roadmap'
 				),
 				array(
-					'id'	=> 'map_center',
-					'label'	=> __( 'Map Center', 'obj-google-maps' ),
+					'id'	=> 'map_height',
+					'label'	=> __( 'Map Height', 'obj-google-maps' ),
 					'description'	=> __( 'Define the height of the map in pixels.', 'obj-google-maps' ),
 					'type'	=> 'text',
 					'default'	=> '400px',
