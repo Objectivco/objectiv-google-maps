@@ -7,7 +7,7 @@ var _googleMaps2 = _interopRequireDefault(_googleMaps);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_googleMaps2.default.KEY = 'AIzaSyA92uX0ssJAJuOoLt6booqV7wQ7lwo4IC0';
+_googleMaps2.default.KEY = data.api_key;
 
 _googleMaps2.default.load(function (google) {
     var uluru = { lat: -25.363, lng: 131.044 };

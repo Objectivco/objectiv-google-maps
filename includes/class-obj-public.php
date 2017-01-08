@@ -58,8 +58,13 @@ class Obj_Gmaps_Public {
      */
     public function enqueue_js() {
 
+		$data_array = array(
+			'api_key'	=> get_option( 'obj_api_key' )
+		);
+
         if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
             wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array(), $this->version, true );
+			wp_localize_script( 'obj-google-maps', 'data', $data_array );
         }
 
     }
