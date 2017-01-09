@@ -9,11 +9,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _googleMaps2.default.KEY = data.api_key;
 _googleMaps2.default.LIBRARIES = ['places'];
+var autocomplete;
 
 _googleMaps2.default.load(function (google) {
-    var autocomlete;
+    var autocomplete;
+    var place;
 
-    autocomlete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), { types: ['geocode'] });
+    function fillInAddress() {
+        place = autocomplete.getPlace();
+        placeId = place.place_id;
+
+        document.getElementById('obj-google-address-place-id').value = 'testing';
+    }
+
+    autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), { types: ['geocode'] });
+
+    autocomplete.addListener('place_changed', fillInAddress);
+
+    console.log(place);
 });
 
 },{"google-maps":2}],2:[function(require,module,exports){

@@ -25,6 +25,19 @@ class Obj_Gmaps_Public {
 
     }
 
+	/**
+     * Enqueue JS
+     *
+     * @since 1.0
+     */
+    public function enqueue_js() {
+
+        if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
+            wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array(), $this->version, true );
+        }
+
+    }
+
     /**
      * Add map shortcode
      *
@@ -42,35 +55,37 @@ class Obj_Gmaps_Public {
      * @since 1.0
      */
     public function map_shortcode_markup() {
-
+		$selected_post_type = get_option( 'obj_post_type' );
 		$height = get_option( 'obj_map_height' );
+
+		$posts_arg = array(
+			'post_type'	=> $selected_post_type,
+			'posts_per_page'	=> -1
+		);
+
+		$posts = get_posts( $posts_arg );
+
+		foreach( $posts as $key => $post ) {
+			$posts[$key]->address = get_post_meta( $post->ID, 'obj_google_address', true );
+		}
+
+		$data_array = array(
+			'apiKey'	=> get_option( 'obj_api_key' ),
+			'mapType'	=> get_option( 'obj_map_type' ),
+			'mapCenter'	=> get_option( 'obj_map_center' ),
+			'mapZoom'	=> get_option( 'obj_map_zoom' ),
+			'locations'	=> $posts
+		);
+
+		if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
+			wp_localize_script( 'obj-google-maps', 'data', $data_array );
+		}
 
         ob_start();
 
         echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
 
         return ob_get_clean();
-
-    }
-
-    /**
-     * Enqueue JS
-     *
-     * @since 1.0
-     */
-    public function enqueue_js() {
-
-		$data_array = array(
-			'apiKey'	=> get_option( 'obj_api_key' ),
-			'mapType'	=> get_option( 'obj_map_type' ),
-			'mapCenter'	=> get_option( 'obj_map_center' ),
-			'mapZoom'	=> get_option( 'obj_map_zoom' )
-		);
-
-        if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
-            wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array(), $this->version, true );
-			wp_localize_script( 'obj-google-maps', 'data', $data_array );
-        }
 
     }
 

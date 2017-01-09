@@ -105,6 +105,7 @@ class Obj_Gmaps_Admin {
 			<label for="autocomplete"><?php _e( "Add the address.", 'obj-google-maps' ); ?></label>
 			<br />
 			<input class="widefat" type="text" name="obj-google-address" id="autocomplete" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
+			<input type="hidden" name="obj-google-address-place-id" id="obj-google-address-place-id" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address_place_id', true ) ); ?>" />
 		</p>
 		<?php
 
@@ -119,15 +120,12 @@ class Obj_Gmaps_Admin {
 
 		$selected_post_type = get_option( 'obj_post_type' );
 
-		if ( ! isset( $_POST['obj_google_address_nonce'] ) || ! wp_verify_nonce( $_POST['obj_google_address_nonce'], plugin_basename( $this->dir ) ) ) {
-			print 'Sorry, your nonce did not verify.';
-			exit;
-		}
-
 		$new_meta_value = ( isset( $_POST['obj-google-address'] ) ? sanitize_text_field( $_POST['obj-google-address'] ) : '' );
+		$new_place_id_value = ( isset( $_POST['obj-google-address-place-id'] ) ? sanitize_text_field( $_POST['obj-google-address-place-id'] ) : '' );
 		$meta_key = 'obj_google_address';
 		$meta_value = get_post_meta( $post_id, $meta_key, true );
 		update_post_meta( $post_id, $meta_key, $new_meta_value );
+		update_post_meta( $post_id, 'obj_google_address_place_id', $new_place_id_value );
 	}
 
 }

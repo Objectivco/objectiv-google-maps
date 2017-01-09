@@ -8,11 +8,12 @@ var _googleMaps2 = _interopRequireDefault(_googleMaps);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _googleMaps2.default.KEY = data.apiKey;
-console.log(data);
 
 _googleMaps2.default.load(function (google) {
+    var map;
     var el = document.getElementById('obj-google-maps');
     var latlng = new google.maps.LatLng(-34.397, 150.644);
+    var locations = data.locations;
     var options = {
         zoom: parseInt(data.mapZoom),
         mapTypeId: data.mapType
@@ -22,8 +23,21 @@ _googleMaps2.default.load(function (google) {
     geocoder.geocode({ 'address': data.mapCenter }, function (results, status) {
         if (status == 'OK') {
             options.center = results[0].geometry.location;
-            var map = new google.maps.Map(el, options);
+            map = new google.maps.Map(el, options);
         }
+    });
+
+    locations.forEach(function (location) {
+        console.log(location);
+        geocoder.geocode({ 'address': location.address }, function (results, status) {
+            if (status == 'OK') {
+                var marker = new google.maps.Marker({
+                    position: results[0].geometry.location,
+                    title: "Hello World!"
+                });
+                marker.setMap(map);
+            }
+        });
     });
 });
 
