@@ -51,12 +51,14 @@ class Obj_Gmaps_Admin {
      * @since 1.0
      */
     public function enqueue_js( $hook ) {
+		$screen = get_current_screen();
+		$selected_post_type = get_option( 'obj_post_type' );
 
 		$data_array = array(
 			'api_key'	=> get_option( 'obj_api_key' )
 		);
 
-		if ( $hook == 'settings_page_obj_google_map_settings' ) {
+		if ( $hook == 'settings_page_obj_google_map_settings' || $screen->post_type == $selected_post_type ) {
 			wp_enqueue_script( 'obj-google-maps-admin', plugins_url( '/assets/js/admin/build/main.js', $this->file ), array(), $this->version, true );
 			wp_localize_script( 'obj-google-maps-admin', 'data', $data_array );
 		}
@@ -100,9 +102,9 @@ class Obj_Gmaps_Admin {
 		$data = array();
 		?>
 		<p>
-			<label for="obj-google-address"><?php _e( "Add the address.", 'obj-google-maps' ); ?></label>
+			<label for="autocomplete"><?php _e( "Add the address.", 'obj-google-maps' ); ?></label>
 			<br />
-			<input class="widefat" type="text" name="obj-google-address" id="obj-google-address" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
+			<input class="widefat" type="text" name="obj-google-address" id="autocomplete" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
 		</p>
 		<?php
 
@@ -122,7 +124,7 @@ class Obj_Gmaps_Admin {
 			exit;
 		}
 
-		$new_meta_value = ( isset( $_POST['obj-google-address'] ) ? sanitize_html_class( $_POST['obj-google-address'] ) : '' );
+		$new_meta_value = ( isset( $_POST['obj-google-address'] ) ? sanitize_text_field( $_POST['obj-google-address'] ) : '' );
 		$meta_key = 'obj_google_address';
 		$meta_value = get_post_meta( $post_id, $meta_key, true );
 		update_post_meta( $post_id, $meta_key, $new_meta_value );

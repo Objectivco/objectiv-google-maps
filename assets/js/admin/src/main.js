@@ -4,10 +4,10 @@ GoogleMapsLoader.KEY = data.api_key;
 GoogleMapsLoader.LIBRARIES = ['places'];
 
 GoogleMapsLoader.load((google) => {
-    var autocomplete;
+    var autocomlete;
 
-    autocomplete = new google.maps.places.Autocomplete(
-        /** @type {!HTMLInputElement} */(document.getElementById('autocomplete')),
+    autocomlete = new google.maps.places.Autocomplete(
+        (document.getElementById('autocomplete')),
         {types: ['geocode']});
 
 });

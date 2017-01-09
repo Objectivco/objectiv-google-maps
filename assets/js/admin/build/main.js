@@ -11,10 +11,9 @@ _googleMaps2.default.KEY = data.api_key;
 _googleMaps2.default.LIBRARIES = ['places'];
 
 _googleMaps2.default.load(function (google) {
-    var autocomplete;
+    var autocomlete;
 
-    autocomplete = new google.maps.places.Autocomplete(
-    /** @type {!HTMLInputElement} */document.getElementById('autocomplete'), { types: ['geocode'] });
+    autocomlete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), { types: ['geocode'] });
 });
 
 },{"google-maps":2}],2:[function(require,module,exports){
