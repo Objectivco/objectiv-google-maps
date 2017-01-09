@@ -18,6 +18,7 @@ class Obj_Gmaps_Admin {
     public function __construct( $file ) {
 
         $this->file = $file;
+		$this->dir = dirname( $file );
 
         // Activation and Deactivation Hooks
         register_activation_hook( $file, array( $this, 'activate_plugin' ) );
@@ -25,7 +26,7 @@ class Obj_Gmaps_Admin {
 
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
-			add_action( 'admin_init', array( $this, 'register_metaboxes' ) );
+			add_action( 'admin_init', array( $this, 'metaboxes_setup' ) );
 		}
 
     }
@@ -63,38 +64,68 @@ class Obj_Gmaps_Admin {
     }
 
 	/**
-	 * Register Metaboxes for specified post type
+	 * Register address metabox
 	 *
 	 * @since 1.0
 	 */
-	public function register_metaboxes() {
+	public function metaboxes_setup () {
+		$selected_post_type = get_option( 'obj_post_type' );
+		add_action( 'add_meta_boxes_' . $selected_post_type, array( $this, 'create_metabox' ), 10, 1 );
+		add_action( 'save_post', array( $this, 'save_metabox' ), 10, 2 );
+	}
+
+	/**
+	 * Create metabox
+	 *
+	 * @since 1.0
+	 */
+	public function create_metabox( $post ) {
+		add_meta_box(
+			'obj-google-address',
+			__( 'Google Maps Address', 'obj-google-maps' ),
+			array( $this, 'metabox_content' ),
+			$post->post_type,
+			'normal',
+			'high'
+		);
+	}
+
+	/**
+	 * Create metabox content
+	 *
+	 * @since 1.0
+	 */
+	public function metabox_content( $object ) {
+		wp_nonce_field( plugin_basename( $this->dir ), 'obj_google_address_nonce' );
+		$data = array();
+		?>
+		<p>
+			<label for="obj-google-address"><?php _e( "Add the address.", 'obj-google-maps' ); ?></label>
+			<br />
+			<input class="widefat" type="text" name="obj-google-address" id="obj-google-address" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
+		</p>
+		<?php
+
+	}
+
+	/**
+	 * Save Metaboxes
+	 *
+	 * @since 1.0
+	 */
+	public function save_metabox( $post_id, $post ) {
+
 		$selected_post_type = get_option( 'obj_post_type' );
 
-		add_action( 'add_meta_boxes_' . $selected_post_type, array( $this, 'setup_metabox' ), 10, 1 );
+		if ( ! isset( $_POST['obj_google_address_nonce'] ) || ! wp_verify_nonce( $_POST['obj_google_address_nonce'], plugin_basename( $this->dir ) ) ) {
+			print 'Sorry, your nonce did not verify.';
+			exit;
+		}
 
-	}
-
-	/**
-	 * Set up the metabox
-	 *
-	 * @since 1.0
-	 */
-	public function setup_metabox( $post ) {
-
-		add_meta_box( 'google-address-fields', __( 'Google Map Address', 'obj-google-maps' ), array( $this, 'metabox_content' ), $post->post_type, 'normal', 'high' );
-
-	}
-
-	/**
-	 * Metabox markup
-	 *
-	 * @since 1.0
-	 */
-	public function metabox_content() {
-		$html = '';
-		$html .= 'testing';
-
-		return $html;
+		$new_meta_value = ( isset( $_POST['obj-google-address'] ) ? sanitize_html_class( $_POST['obj-google-address'] ) : '' );
+		$meta_key = 'obj_google_address';
+		$meta_value = get_post_meta( $post_id, $meta_key, true );
+		update_post_meta( $post_id, $meta_key, $new_meta_value );
 	}
 
 }
