@@ -23,7 +23,10 @@ class Obj_Gmaps_Admin {
         register_activation_hook( $file, array( $this, 'activate_plugin' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate_plugin' ) );
 
-        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
+		if ( is_admin() ) {
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
+			add_action( 'admin_init', array( $this, 'register_metaboxes' ) );
+		}
 
     }
 
@@ -58,5 +61,40 @@ class Obj_Gmaps_Admin {
 		}
 
     }
+
+	/**
+	 * Register Metaboxes for specified post type
+	 *
+	 * @since 1.0
+	 */
+	public function register_metaboxes() {
+		$selected_post_type = get_option( 'obj_post_type' );
+
+		add_action( 'add_meta_boxes_' . $selected_post_type, array( $this, 'setup_metabox' ), 10, 1 );
+
+	}
+
+	/**
+	 * Set up the metabox
+	 *
+	 * @since 1.0
+	 */
+	public function setup_metabox( $post ) {
+
+		add_meta_box( 'google-address-fields', __( 'Google Map Address', 'obj-google-maps' ), array( $this, 'metabox_content' ), $post->post_type, 'normal', 'high' );
+
+	}
+
+	/**
+	 * Metabox markup
+	 *
+	 * @since 1.0
+	 */
+	public function metabox_content() {
+		$html = '';
+		$html .= 'testing';
+
+		return $html;
+	}
 
 }

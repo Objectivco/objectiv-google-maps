@@ -137,6 +137,14 @@ class Obj_Gmaps_Settings {
 					'default'	=> ''
 				),
 				array(
+					'id'	=> 'create_custom_fields',
+					'label'	=> __( 'Address Fields', 'obj-google-maps' ),
+					'description'	=> __( 'Add address custom fields to the selected post type.', 'obj-google-maps' ),
+					'type'	=> 'checkbox',
+					'default'	=> 'on',
+					'callback'	=> 'wp_strip_all_tags'
+				),
+				array(
 					'id'	=> 'map_type',
 					'label'	=> __( 'Map Type', 'obj-google-maps' ),
 					'description'	=> __( 'Select which type of map you would like to display', 'obj-google-maps' ),
@@ -281,6 +289,14 @@ class Obj_Gmaps_Settings {
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '" />' . "\n";
 			break;
 
+			case 'checkbox':
+				$checked = '';
+				if ( $data && 'on' == $data ){
+					$checked = 'checked="checked"';
+				}
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . ' class="' . $class . '"/>' . "\n";
+			break;
+
 			case 'autocomplete':
 				$html .= '<input id="' . esc_attr( $field['type'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
 			break;
@@ -310,7 +326,6 @@ class Obj_Gmaps_Settings {
      * @since 1.0
      */
     public function settings_page_markup() {
-
 		?>
         <div class="wrap">
             <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>

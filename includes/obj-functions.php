@@ -4,6 +4,8 @@
  * Check to see if page has a shortcode
  * @param  string  $shortcode
  * @return boolean
+ *
+ * @since 1.0
  */
 function obj_has_shortcode( $shortcode = '' ) {
 
