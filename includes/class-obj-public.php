@@ -85,7 +85,7 @@ class Obj_Gmaps_Public {
         ob_start();
 
 		echo '<div id="obj-google-map-wrap">';
-		echo '<input id="pac-input" class="controls" type="text" placeholder="Search by city...">';
+		echo '<input id="obj-search-input" class="controls" type="text" placeholder="Search by city...">';
         echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
 		echo '</div>';
 

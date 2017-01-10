@@ -1,4 +1,4 @@
-#obj-google-map-wrap #pac-input {
+#obj-google-map-wrap #obj-search-input {
     border: none;
     border-radius: 2px;
     box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
@@ -11,18 +11,18 @@
     width: 250px;
 }
 
-#obj-google-map-wrap #pac-input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+#obj-google-map-wrap #obj-search-input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color: #555555;
 }
 
-#obj-google-map-wrap #pac-input::-moz-placeholder { /* Firefox 19+ */
+#obj-google-map-wrap #obj-search-input::-moz-placeholder { /* Firefox 19+ */
   color: #555555;
 }
 
-#obj-google-map-wrap #pac-input:-ms-input-placeholder { /* IE 10+ */
+#obj-google-map-wrap #obj-search-input:-ms-input-placeholder { /* IE 10+ */
   color: #555555;
 }
 
-#obj-google-map-wrap #pac-input:-moz-placeholder { /* Firefox 18- */
+#obj-google-map-wrap #obj-search-input:-moz-placeholder { /* Firefox 18- */
   color: #555555;
 }

@@ -15,7 +15,7 @@ _googleMaps2.default.load(function (google) {
     var autocomplete;
     var places;
     var el = document.getElementById('obj-google-maps');
-    var input = document.getElementById('pac-input');
+    var input = document.getElementById('obj-search-input');
     var searchBox = new google.maps.places.SearchBox(input);
     var locations = data.locations;
     var options = {
@@ -58,7 +58,7 @@ _googleMaps2.default.load(function (google) {
 
             // set up the google places autocomplete restricted to cities
             autocomplete = new google.maps.places.Autocomplete(
-            /** @type {!HTMLInputElement} */document.getElementById('pac-input'), {
+            /** @type {!HTMLInputElement} */document.getElementById('obj-search-input'), {
                 types: ['(cities)']
             });
 
