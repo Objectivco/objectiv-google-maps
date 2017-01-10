@@ -137,14 +137,6 @@ class Obj_Gmaps_Settings {
 					'default'	=> ''
 				),
 				array(
-					'id'	=> 'create_custom_fields',
-					'label'	=> __( 'Address Fields', 'obj-google-maps' ),
-					'description'	=> __( 'Add address custom fields to the selected post type.', 'obj-google-maps' ),
-					'type'	=> 'checkbox',
-					'default'	=> 'on',
-					'callback'	=> 'wp_strip_all_tags'
-				),
-				array(
 					'id'	=> 'map_type',
 					'label'	=> __( 'Map Type', 'obj-google-maps' ),
 					'description'	=> __( 'Select which type of map you would like to display', 'obj-google-maps' ),

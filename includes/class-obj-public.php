@@ -34,6 +34,7 @@ class Obj_Gmaps_Public {
 
         if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
             wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array(), $this->version, true );
+			wp_enqueue_style( 'obj-google-maps-style', plugins_url( '/assets/css/public/public.css', $this->file ), array(), $this->version );
         }
 
     }
@@ -83,7 +84,10 @@ class Obj_Gmaps_Public {
 
         ob_start();
 
+		echo '<div id="obj-google-map-wrap">';
+		echo '<input id="pac-input" class="controls" type="text" placeholder="Search by city...">';
         echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
+		echo '</div>';
 
         return ob_get_clean();
 

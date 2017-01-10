@@ -1,0 +1,28 @@
+#obj-google-map-wrap #pac-input {
+    border: none;
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+    color: rgb(86, 86, 86);
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    padding: 8px;
+    top: 10px !important;
+    width: 250px;
+}
+
+#obj-google-map-wrap #pac-input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #555555;
+}
+
+#obj-google-map-wrap #pac-input::-moz-placeholder { /* Firefox 19+ */
+  color: #555555;
+}
+
+#obj-google-map-wrap #pac-input:-ms-input-placeholder { /* IE 10+ */
+  color: #555555;
+}
+
+#obj-google-map-wrap #pac-input:-moz-placeholder { /* Firefox 18- */
+  color: #555555;
+}
