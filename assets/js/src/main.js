@@ -65,13 +65,22 @@ GoogleMapsLoader.load((google) => {
 
     // Loop through locations and add the markers
     locations.forEach((location) => {
+        console.log(location);
         geocoder.geocode( { 'address': location.address }, function(results, status) {
             if (status == 'OK') {
+                var infoWindow = new google.maps.InfoWindow({
+                    content: '<strong>' + location.post_title + '</strong><br>' + location.address
+                });
+
                 var marker = new google.maps.Marker({
                     position: results[0].geometry.location,
-                    title:"Hello World!"
                 });
+
                 marker.setMap(map);
+
+                marker.addListener('click', function() {
+                    infoWindow.open(map, marker);
+                })
             }
         })
     });

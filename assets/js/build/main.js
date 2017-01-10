@@ -71,13 +71,22 @@ _googleMaps2.default.load(function (google) {
 
     // Loop through locations and add the markers
     locations.forEach(function (location) {
+        console.log(location);
         geocoder.geocode({ 'address': location.address }, function (results, status) {
             if (status == 'OK') {
-                var marker = new google.maps.Marker({
-                    position: results[0].geometry.location,
-                    title: "Hello World!"
+                var infoWindow = new google.maps.InfoWindow({
+                    content: '<strong>' + location.post_title + '</strong><br>' + location.address
                 });
+
+                var marker = new google.maps.Marker({
+                    position: results[0].geometry.location
+                });
+
                 marker.setMap(map);
+
+                marker.addListener('click', function () {
+                    infoWindow.open(map, marker);
+                });
             }
         });
     });
