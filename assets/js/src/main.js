@@ -69,7 +69,7 @@ GoogleMapsLoader.load((google) => {
         geocoder.geocode( { 'address': location.address }, function(results, status) {
             if (status == 'OK') {
                 var infoWindow = new google.maps.InfoWindow({
-                    content: '<strong>' + location.post_title + '</strong><br>' + location.address
+                    content: '<strong>' + location.post_title + '</strong><br>' + location.address + '<br><a href="' + location.permalink + '">View ' + location.post_type_label + '</a>'
                 });
 
                 var marker = new google.maps.Marker({

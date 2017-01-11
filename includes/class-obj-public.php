@@ -64,10 +64,15 @@ class Obj_Gmaps_Public {
 			'posts_per_page'	=> -1
 		);
 
+		$post_type_object = get_post_type_object( $selected_post_type );
+		$post_type_object_labels = $post_type_object->labels;
+
 		$posts = get_posts( $posts_arg );
 
 		foreach( $posts as $key => $post ) {
 			$posts[$key]->address = get_post_meta( $post->ID, 'obj_google_address', true );
+			$posts[$key]->permalink = get_the_permalink( $post->ID );
+			$posts[$key]->post_type_label = $post_type_object_labels->singular_name;
 		}
 
 		$data_array = array(
