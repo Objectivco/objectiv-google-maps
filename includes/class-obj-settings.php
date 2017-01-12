@@ -125,7 +125,7 @@ class Obj_Gmaps_Settings {
 		$settings = array();
 
 		$settings['general'] = array(
-			'title'	=> __( 'General', 'obj-google-maps' ),
+			'title'	=> __( '', 'obj-google-maps' ),
 			'description'	=> __( '', 'obj-google-maps' ),
 			'fields'	=> array(
 				array(
