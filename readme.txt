@@ -37,16 +37,6 @@ Installing "Objectiv Google Maps" can be done by searching for "Objectiv Google 
 1. Activate the plugin on the "Plugins" menu page
 1. Edit plugin settings on the "Settings > Google Maps" page
 
-== Frequently Asked Questions ==
-
-= A question that someone might have =
-
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
-
 == Screenshots ==
 
 1. Google Map settings page
@@ -60,6 +50,3 @@ Answer to foo bar dilemma.
 = 1.0 =
 * 2016-01-12
 * Initial release
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
