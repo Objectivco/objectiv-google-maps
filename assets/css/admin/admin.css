@@ -18,6 +18,7 @@
 .obj-settings-page__sidebar-box {
     background: #fff;
     border: 1px solid #e5e5e5;
+    margin-bottom: 1em;
 }
 
 .obj-settings-page__box-wrap {

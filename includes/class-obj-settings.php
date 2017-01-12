@@ -349,6 +349,13 @@ class Obj_Gmaps_Settings {
 							</ul> -->
 						</div>
 					</div>
+					<div class="obj-settings-page__sidebar-box">
+						<div class="obj-settings-page__box-wrap">
+							<h3>Displaying The Map</h3>
+							<p>Use the shortcode below to display the map on any page or post.</p>
+							<p><code>[objectiv_google_maps]</code></p>
+						</div>
+					</div>
 				</aside>
 			</div>
         </div>
