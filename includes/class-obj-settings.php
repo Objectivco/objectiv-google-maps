@@ -172,6 +172,18 @@ class Obj_Gmaps_Settings {
 					'default'	=> '8'
 				),
 				array(
+					'id'	=> 'map_search_by',
+					'label'	=> __( 'Search By', 'obj-google-maps' ),
+					'description' => __( 'Select whether you want your visitors to be able to search for locations by address, city, or region.' ),
+					'type'	=> 'select',
+					'options'	=> array(
+						'address'	=> 'Address',
+						'city'	=> 'City',
+						'region'	=> 'Region'
+					),
+					'default'	=> 'address'
+				),
+				array(
 					'id'	=> 'api_key',
 					'label'	=> __( 'Google API Key', 'obj-google-maps' ),
 					'description'	=> __( 'Enter the Google API key to use this plugin.', 'obj-google-maps' ),
