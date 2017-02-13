@@ -3,7 +3,7 @@
 Plugin Name: Objectiv Google Maps
 Plugin URI:  http://objectiv.co
 Description: Create searchable Google maps
-Version:     1.2
+Version:     1.1
 Author:      Objectiv
 Author URI:  http://objectiv.co
 License:     GPL2
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$version = 1.2;
+$version = 1.1;
 
 require_once( 'includes/class-obj-admin.php' );
 require_once( 'includes/class-obj-settings.php' );
