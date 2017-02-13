@@ -1,7 +1,14 @@
 var GoogleMapsLoader = require('google-maps');
+var userMarkers = [];
 
 GoogleMapsLoader.KEY = data.apiKey;
 GoogleMapsLoader.LIBRARIES = ['places'];
+
+function clearUserMarkers() {
+    for (var i = 0; i < userMarkers.length; i++) {
+      userMarkers[i].setMap(null);
+    }
+}
 
 GoogleMapsLoader.load(function(google) {
     var map;
@@ -23,14 +30,18 @@ GoogleMapsLoader.load(function(google) {
     function onPlaceChanged() {
         var place = autocomplete.getPlace();
         if (place.geometry) {
+            clearUserMarkers();
             map.panTo(place.geometry.location);
             map.setZoom(8);
-            
+
             var marker = new google.maps.Marker({
                 map: map,
                 position: {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()},
                 icon: userIcon
             });
+            userMarkers.push(marker);
+
+            console.log(userMarkers);
 
         } else {
             input.placeholder = 'Search by city...';
