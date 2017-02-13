@@ -177,9 +177,11 @@ class Obj_Gmaps_Settings {
 					'description' => __( 'Select whether you want your visitors to be able to search for locations by address, city, or region.' ),
 					'type'	=> 'select',
 					'options'	=> array(
+						'geocode'	=> 'Geocode',
 						'address'	=> 'Address',
-						'city'	=> 'City',
-						'region'	=> 'Region'
+						'establishment'	=> 'Establishment',
+						'(cities)'	=> 'City',
+						'(regions)'	=> 'Region'
 					),
 					'default'	=> 'address'
 				),

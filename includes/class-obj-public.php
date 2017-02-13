@@ -58,6 +58,8 @@ class Obj_Gmaps_Public {
     public function map_shortcode_markup() {
 		$selected_post_type = get_option( 'obj_post_type' );
 		$height = get_option( 'obj_map_height' );
+		$search_by = get_option( 'obj_map_search_by' );
+		$placeholder = '';
 
 		$posts_arg = array(
 			'post_type'	=> $selected_post_type,
@@ -87,6 +89,7 @@ class Obj_Gmaps_Public {
 			'mapType'	=> get_option( 'obj_map_type' ),
 			'mapCenter'	=> get_option( 'obj_map_center' ),
 			'mapZoom'	=> get_option( 'obj_map_zoom' ),
+			'mapSearch'	=> get_option( 'obj_map_search_by' ),
 			'locations'	=> $posts
 		);
 
@@ -94,10 +97,23 @@ class Obj_Gmaps_Public {
 			wp_localize_script( 'obj-google-maps', 'data', $data_array );
 		}
 
+		if ( $search_by == 'geocode' ) {
+			$placeholder = 'Search...';
+		} else if ( $search_by == 'address' ) {
+			$placeholder = 'Search by Address...';
+		} else if ( $search_by == 'establishment' ) {
+			$placeholder = 'Search by Establishment...';
+		} else if ( $search_by == '(cities)' ) {
+			$placeholder = 'Search by City...';
+		} else if ( $search_by == '(regions)' ) {
+			$placeholder = 'Search by Regions...';
+		}
+
+
         ob_start();
 
 		echo '<div id="obj-google-map-wrap">';
-		echo '<input id="obj-search-input" class="controls" type="text" placeholder="Search by city...">';
+		echo '<input id="obj-search-input" class="controls" type="text" placeholder="' . $placeholder . '">';
         echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
 		echo '</div>';
 

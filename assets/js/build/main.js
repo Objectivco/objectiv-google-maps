@@ -55,7 +55,7 @@ GoogleMapsLoader.load(function (google) {
             // set up the google places autocomplete restricted to cities
             autocomplete = new google.maps.places.Autocomplete(
             /** @type {!HTMLInputElement} */document.getElementById('obj-search-input'), {
-                types: ['(cities)']
+                types: [data.mapSearch]
             });
 
             places = new google.maps.places.PlacesService(map);
