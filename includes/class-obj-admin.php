@@ -128,9 +128,11 @@ class Obj_Gmaps_Admin {
 	        $data = wp_remote_retrieve_body( $response );
 	        $output = json_decode( $data );
 	        if ($output->status == 'OK') {
+				$address_components = $output->results[0]->address_components;
 	            $geometry = $output->results[0]->geometry;
 	            $longitude = $geometry->location->lng;
 	            $latitude = $geometry->location->lat;
+				update_post_meta( $post_id, 'obj_location_address_components', $address_components );
 	            update_post_meta( $post_id, 'obj_location_lat', $latitude );
 	            update_post_meta( $post_id, 'obj_location_lng', $longitude );
 	        }

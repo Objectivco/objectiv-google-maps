@@ -81,6 +81,7 @@ class Obj_Gmaps_Public {
 				$posts[$key]->permalink = get_the_permalink( $post->ID );
 				$posts[$key]->post_type_label = $post_type_object_labels->singular_name;
 				$posts[$key]->address = get_post_meta( $post->ID, 'obj_google_address', true );
+				$posts[$key]->address_components = get_post_meta( $post->ID, 'obj_location_address_components', true );
 			}
 		}
 
