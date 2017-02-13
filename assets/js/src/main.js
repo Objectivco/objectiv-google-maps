@@ -11,27 +11,35 @@ GoogleMapsLoader.load(function(google) {
     var input = document.getElementById('obj-search-input');
     var searchBox = new google.maps.places.SearchBox(input);
     var locations = data.locations;
+    var userIcon = 'http://maps.google.com/mapfiles/ms/micons/man.png';
     var options = {
         zoom: parseInt(data.mapZoom),
         mapTypeId: data.mapType
     };
 
     /**
-     * When a city has been selected pan and zoom to the center
-     */
+    * When a city has been selected pan and zoom to the center
+    */
     function onPlaceChanged() {
         var place = autocomplete.getPlace();
         if (place.geometry) {
-          map.panTo(place.geometry.location);
-          map.setZoom(8);
+            map.panTo(place.geometry.location);
+            map.setZoom(8);
+            
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()},
+                icon: userIcon
+            });
+
         } else {
-          input.placeholder = 'Search by city...';
+            input.placeholder = 'Search by city...';
         }
     }
 
     /**
-     * Get lat and long from center map
-     */
+    * Get lat and long from center map
+    */
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode( { 'address': data.mapCenter }, function(results, status) {
         if (status == 'OK') {
@@ -51,43 +59,43 @@ GoogleMapsLoader.load(function(google) {
 
             // set up the google places autocomplete restricted to cities
             autocomplete = new google.maps.places.Autocomplete(
-            /** @type {!HTMLInputElement} */ (
+                /** @type {!HTMLInputElement} */ (
                 document.getElementById('obj-search-input')), {
-                types: [data.mapSearch]
-            });
+                    types: [data.mapSearch]
+                });
 
-            places = new google.maps.places.PlacesService(map);
+                places = new google.maps.places.PlacesService(map);
 
-            // add listener to run onPlaceChanged when a city has been selected
-            autocomplete.addListener('place_changed', onPlaceChanged);
+                // add listener to run onPlaceChanged when a city has been selected
+                autocomplete.addListener('place_changed', onPlaceChanged);
 
-            // Loop through locations and add the markers
-            locations.forEach(function(location) {
-                var lat = location.lat;
-                var lng = location.lng;
+                // Loop through locations and add the markers
+                locations.forEach(function(location) {
+                    var lat = location.lat;
+                    var lng = location.lng;
 
-                if ( lat && lng ) {
-                    var numLat = parseFloat(lat);
-                    var numLng = parseFloat(lng);
+                    if ( lat && lng ) {
+                        var numLat = parseFloat(lat);
+                        var numLng = parseFloat(lng);
 
-                    console.log(numLat);
-                    console.log(numLng);
+                        console.log(numLat);
+                        console.log(numLng);
 
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        position: {lat: numLat, lng: numLng}
-                    });
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: {lat: numLat, lng: numLng}
+                        });
 
-                    var infoWindow = new google.maps.InfoWindow({
-                        content: '<strong>' + location.post_title + '</strong><br>' + location.address + '<br><a href="' + location.permalink + '">View ' + location.post_type_label + '</a>'
-                    });
+                        var infoWindow = new google.maps.InfoWindow({
+                            content: '<strong>' + location.post_title + '</strong><br>' + location.address + '<br><a href="' + location.permalink + '">View ' + location.post_type_label + '</a>'
+                        });
 
-                    marker.addListener('click', function() {
-                        infoWindow.open(map, marker);
-                    });
+                        marker.addListener('click', function() {
+                            infoWindow.open(map, marker);
+                        });
 
-                }
-            });
-        }
+                    }
+                });
+            }
+        });
     });
-});

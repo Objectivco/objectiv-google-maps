@@ -14,27 +14,34 @@ GoogleMapsLoader.load(function (google) {
     var input = document.getElementById('obj-search-input');
     var searchBox = new google.maps.places.SearchBox(input);
     var locations = data.locations;
+    var userIcon = 'http://maps.google.com/mapfiles/ms/micons/man.png';
     var options = {
         zoom: parseInt(data.mapZoom),
         mapTypeId: data.mapType
     };
 
     /**
-     * When a city has been selected pan and zoom to the center
-     */
+    * When a city has been selected pan and zoom to the center
+    */
     function onPlaceChanged() {
         var place = autocomplete.getPlace();
         if (place.geometry) {
             map.panTo(place.geometry.location);
             map.setZoom(8);
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() },
+                icon: userIcon
+            });
         } else {
             input.placeholder = 'Search by city...';
         }
     }
 
     /**
-     * Get lat and long from center map
-     */
+    * Get lat and long from center map
+    */
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': data.mapCenter }, function (results, status) {
         if (status == 'OK') {

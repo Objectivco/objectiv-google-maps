@@ -90,6 +90,7 @@ class Obj_Gmaps_Public {
 			'mapCenter'	=> get_option( 'obj_map_center' ),
 			'mapZoom'	=> get_option( 'obj_map_zoom' ),
 			'mapSearch'	=> get_option( 'obj_map_search_by' ),
+			'mapLocationIcon'	=> get_option( 'obj_map_location_icon' ),
 			'locations'	=> $posts
 		);
 

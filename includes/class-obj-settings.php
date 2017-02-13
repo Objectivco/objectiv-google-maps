@@ -186,6 +186,12 @@ class Obj_Gmaps_Settings {
 					'default'	=> 'address'
 				),
 				array(
+					'id'	=> 'map_location_icon',
+					'label'	=> __( 'Location Icon', 'obj-google-maps' ),
+					'description'	=> __( 'Display an icon on the location that was searched for.' ),
+					'type'	=> 'checkbox'
+				),
+				array(
 					'id'	=> 'api_key',
 					'label'	=> __( 'Google API Key', 'obj-google-maps' ),
 					'description'	=> __( 'Enter the Google API key to use this plugin.', 'obj-google-maps' ),
