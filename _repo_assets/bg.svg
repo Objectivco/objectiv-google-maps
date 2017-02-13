@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="882px" height="108px" viewBox="0 0 882 108" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>bg</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="bg">
+            <path d="M0,54 C0,54 56,-24 358,45 C660,114 882,0 882,0 L882,107.004673 L1.99771664,107.004673 L0,54 Z" id="Path" fill="#789FCA"></path>
+            <path d="M882,107 C882,107 756,16.7417317 544,45 C453.719744,57.0337911 341.688909,82.8352301 243,83 C144.311091,83.1647699 1,55 1,55 L1,106.00641 L882,107 Z" id="Path-2" fill-opacity="0.720000029" fill="#001D5E"></path>
+        </g>
+    </g>
+</svg>

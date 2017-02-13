@@ -1,16 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _googleMaps = require('google-maps');
+var GoogleMapsLoader = require('google-maps');
 
-var _googleMaps2 = _interopRequireDefault(_googleMaps);
+GoogleMapsLoader.KEY = data.apiKey;
+GoogleMapsLoader.LIBRARIES = ['places'];
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_googleMaps2.default.KEY = data.apiKey;
-_googleMaps2.default.LIBRARIES = ['places'];
-
-_googleMaps2.default.load(function (google) {
+GoogleMapsLoader.load(function (google) {
     var map;
     var autocomplete;
     var places;
@@ -66,29 +62,34 @@ _googleMaps2.default.load(function (google) {
 
             // add listener to run onPlaceChanged when a city has been selected
             autocomplete.addListener('place_changed', onPlaceChanged);
+
+            // Loop through locations and add the markers
+            locations.forEach(function (location) {
+                var lat = location.lat;
+                var lng = location.lng;
+
+                if (lat && lng) {
+                    var numLat = parseFloat(lat);
+                    var numLng = parseFloat(lng);
+
+                    console.log(numLat);
+                    console.log(numLng);
+
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: { lat: numLat, lng: numLng }
+                    });
+
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: '<strong>' + location.post_title + '</strong><br>' + location.address + '<br><a href="' + location.permalink + '">View ' + location.post_type_label + '</a>'
+                    });
+
+                    marker.addListener('click', function () {
+                        infoWindow.open(map, marker);
+                    });
+                }
+            });
         }
-    });
-
-    // Loop through locations and add the markers
-    locations.forEach(function (location) {
-        console.log(location);
-        geocoder.geocode({ 'address': location.address }, function (results, status) {
-            if (status == 'OK') {
-                var infoWindow = new google.maps.InfoWindow({
-                    content: '<strong>' + location.post_title + '</strong><br>' + location.address + '<br><a href="' + location.permalink + '">View ' + location.post_type_label + '</a>'
-                });
-
-                var marker = new google.maps.Marker({
-                    position: results[0].geometry.location
-                });
-
-                marker.setMap(map);
-
-                marker.addListener('click', function () {
-                    infoWindow.open(map, marker);
-                });
-            }
-        });
     });
 });
 

@@ -70,9 +70,16 @@ class Obj_Gmaps_Public {
 		$posts = get_posts( $posts_arg );
 
 		foreach( $posts as $key => $post ) {
-			$posts[$key]->address = get_post_meta( $post->ID, 'obj_google_address', true );
-			$posts[$key]->permalink = get_the_permalink( $post->ID );
-			$posts[$key]->post_type_label = $post_type_object_labels->singular_name;
+			$lat = get_post_meta( $post->ID, 'obj_location_lat', true );
+			$lng = get_post_meta( $post->ID, 'obj_location_lng', true );
+
+			if ( $lat && $lng ) {
+				$posts[$key]->lat = $lat;
+				$posts[$key]->lng = $lng;
+				$posts[$key]->permalink = get_the_permalink( $post->ID );
+				$posts[$key]->post_type_label = $post_type_object_labels->singular_name;
+				$posts[$key]->address = get_post_meta( $post->ID, 'obj_google_address', true );
+			}
 		}
 
 		$data_array = array(

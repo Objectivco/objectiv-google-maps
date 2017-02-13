@@ -1,9 +1,9 @@
-import GoogleMapsLoader from 'google-maps';
+var GoogleMapsLoader = require('google-maps');
 
 GoogleMapsLoader.KEY = data.apiKey;
 GoogleMapsLoader.LIBRARIES = ['places'];
 
-GoogleMapsLoader.load((google) => {
+GoogleMapsLoader.load(function(google) {
     var map;
     var autocomplete;
     var places;
@@ -60,28 +60,34 @@ GoogleMapsLoader.load((google) => {
 
             // add listener to run onPlaceChanged when a city has been selected
             autocomplete.addListener('place_changed', onPlaceChanged);
+
+            // Loop through locations and add the markers
+            locations.forEach(function(location) {
+                var lat = location.lat;
+                var lng = location.lng;
+
+                if ( lat && lng ) {
+                    var numLat = parseFloat(lat);
+                    var numLng = parseFloat(lng);
+
+                    console.log(numLat);
+                    console.log(numLng);
+
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: {lat: numLat, lng: numLng}
+                    });
+
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: '<strong>' + location.post_title + '</strong><br>' + location.address + '<br><a href="' + location.permalink + '">View ' + location.post_type_label + '</a>'
+                    });
+
+                    marker.addListener('click', function() {
+                        infoWindow.open(map, marker);
+                    });
+
+                }
+            });
         }
-    });
-
-    // Loop through locations and add the markers
-    locations.forEach((location) => {
-        console.log(location);
-        geocoder.geocode( { 'address': location.address }, function(results, status) {
-            if (status == 'OK') {
-                var infoWindow = new google.maps.InfoWindow({
-                    content: '<strong>' + location.post_title + '</strong><br>' + location.address + '<br><a href="' + location.permalink + '">View ' + location.post_type_label + '</a>'
-                });
-
-                var marker = new google.maps.Marker({
-                    position: results[0].geometry.location,
-                });
-
-                marker.setMap(map);
-
-                marker.addListener('click', function() {
-                    infoWindow.open(map, marker);
-                })
-            }
-        })
     });
 });

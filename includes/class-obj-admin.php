@@ -27,6 +27,7 @@ class Obj_Gmaps_Admin {
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
 			add_action( 'admin_init', array( $this, 'metaboxes_setup' ) );
+			add_action( 'save_post', array( $this, 'save_location_lat_long' ), 10, 3 );
 		}
 
     }
@@ -105,10 +106,35 @@ class Obj_Gmaps_Admin {
 			<label for="autocomplete"><?php _e( "Add the address.", 'obj-google-maps' ); ?></label>
 			<br />
 			<input class="widefat" type="text" name="obj-google-address" id="autocomplete" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
-			<input type="hidden" name="obj-google-address-place-id" id="obj-google-address-place-id" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address_place_id', true ) ); ?>" />
 		</p>
 		<?php
 
+	}
+
+	function save_location_lat_long( $post_id, $post, $update ) {
+
+	    $post_type = get_post_type($post_id);
+
+	    // If this isn't a 'book' post, don't update it.
+	    if ( get_option( 'obj_post_type' ) != $post_type ) return;
+
+	    // - Update the post's metadata.
+	    if ( isset( $_POST['obj-google-address'] ) ) {
+	        $address = $_POST['obj-google-address'];
+	        $string = str_replace (" ", "+", urlencode( $address ) );
+	        $url = "http://maps.googleapis.com/maps/api/geocode/json?address=".$string."&sensor=false";
+
+	        $response = wp_remote_get( $url );
+	        $data = wp_remote_retrieve_body( $response );
+	        $output = json_decode( $data );
+	        if ($output->status == 'OK') {
+	            $geometry = $output->results[0]->geometry;
+	            $longitude = $geometry->location->lng;
+	            $latitude = $geometry->location->lat;
+	            update_post_meta( $post_id, 'obj_location_lat', $latitude );
+	            update_post_meta( $post_id, 'obj_location_lng', $longitude );
+	        }
+	    }
 	}
 
 	/**
@@ -125,7 +151,6 @@ class Obj_Gmaps_Admin {
 		$meta_key = 'obj_google_address';
 		$meta_value = get_post_meta( $post_id, $meta_key, true );
 		update_post_meta( $post_id, $meta_key, $new_meta_value );
-		update_post_meta( $post_id, 'obj_google_address_place_id', $new_place_id_value );
 	}
 
 }
