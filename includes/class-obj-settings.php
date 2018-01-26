@@ -31,7 +31,7 @@ class Obj_Gmaps_Settings {
             add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_css' ) );
         }
-
+			add_action( 'update_option_obj_map_center', array( $this, 'flush_center_lat_long_cache' ) );
     }
 
     /**
@@ -382,4 +382,9 @@ class Obj_Gmaps_Settings {
         <?php
     }
 
+	public function flush_center_lat_long_cache() {
+		wp_cache_delete( 'obj_map_center_address_components' );
+		wp_cache_delete( 'obj_map_center_lat' );
+		wp_cache_delete( 'obj_map_center_lng' );
+	}
 }

@@ -127,7 +127,7 @@ class Obj_Gmaps_Admin {
 	        $response = wp_remote_get( $url );
 	        $data = wp_remote_retrieve_body( $response );
 	        $output = json_decode( $data );
-	        if ($output->status == 'OK') {
+	        if (!empty($output) && $output->status == 'OK') {
 				$address_components = $output->results[0]->address_components;
 	            $geometry = $output->results[0]->geometry;
 	            $longitude = $geometry->location->lng;
