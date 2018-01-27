@@ -89,11 +89,19 @@ class Obj_Gmaps_Public {
 			'apiKey'	=> get_option( 'obj_api_key' ),
 			'mapType'	=> get_option( 'obj_map_type' ),
 			'mapCenter'	=> get_option( 'obj_map_center' ),
+			'mapCenterAddressCompnents' => wp_cache_get( 'obj_map_center_address_components' ),
+			'mapCenterLat' => wp_cache_get( 'obj_map_center_lat' ),
+			'mapCenterLng' => wp_cache_get( 'obj_map_center_lng' ),
 			'mapZoom'	=> get_option( 'obj_map_zoom' ),
 			'mapSearch'	=> get_option( 'obj_map_search_by' ),
 			'mapLocationIcon'	=> get_option( 'obj_map_location_icon' ),
 			'locations'	=> $posts
 		);
+
+		if( !empty( $data_array['mapCenter'] ) 
+			&& ( empty( $data_array['mapCenterAddressCompnents'] ) || empty( $data_array['mapCenterLat'] ) || empty( $data_array['mapCenterLng'] ) ) ) {
+			$this->update_center_lat_long_cache( $data_array );
+		}
 
 		if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
 			wp_localize_script( 'obj-google-maps', 'data', $data_array );
@@ -123,4 +131,24 @@ class Obj_Gmaps_Public {
 
     }
 
+	private function update_center_lat_long_cache( &$data_array ) {
+		$string = str_replace (" ", "+", urlencode( $data_array['mapCenter'] ) );
+		$url = "http://maps.googleapis.com/maps/api/geocode/json?address=".$string."&sensor=false";
+
+		$response = wp_remote_get( $url );
+		$data = wp_remote_retrieve_body( $response );
+		$output = json_decode( $data );
+		if (!empty($output) && $output->status == 'OK') {
+			$address_components = $output->results[0]->address_components;
+			$geometry = $output->results[0]->geometry;
+			$longitude = $geometry->location->lng;
+			$latitude = $geometry->location->lat;
+			wp_cache_set( 'obj_map_center_address_components', $address_components );
+			wp_cache_set( 'obj_map_center_lat', $latitude );
+			wp_cache_set( 'obj_map_center_lng', $longitude );
+			$data_array['mapCenterAddressCompnents'] = $address_components;
+			$data_array['mapCenterLat'] = $latitude;
+			$data_array['mapCenterLng'] = $longitude;
+		}
+	}
 }
