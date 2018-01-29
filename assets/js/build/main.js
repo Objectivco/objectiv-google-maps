@@ -118,7 +118,6 @@ GoogleMapsLoader.load(function (google) {
 
 				var markerLatLng = new google.maps.LatLng({ lat: numLat, lng: numLng }),
 					toCenterDistance = google.maps.geometry.spherical.computeDistanceBetween( center, markerLatLng );
-				console.log(toCenterDistance);
 
 				if ( markerBoundsRange >= toCenterDistance) {
 					markersInBoundsRange.push( markerLatLng );
