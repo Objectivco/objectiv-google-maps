@@ -82,39 +82,6 @@ GoogleMapsLoader.load(function (google) {
 			if (lat && lng) {
 				var numLat = parseFloat(lat);
 				var numLng = parseFloat(lng);
-				var components = location.address_components;
-				var streetNumber;
-				var streetName;
-				var cityName;
-				var stateName;
-				var countryName;
-				var zip;
-
-				for (var i = 0; i < components.length; i++) {
-					if (components[i].types[0] === "street_number") {
-						streetNumber = components[i].long_name;
-					}
-
-					if (components[i].types[0] === "route") {
-						streetName = components[i].short_name;
-					}
-
-					if (components[i].types[0] === "locality") {
-						cityName = components[i].long_name;
-					}
-
-					if (components[i].types[0] === "administrative_area_level_1") {
-						stateName = components[i].short_name;
-					}
-
-					if (components[i].types[0] === "country") {
-						countryName = components[i].short_name;
-					}
-
-					if (components[i].types[0] === "postal_code") {
-						zip = components[i].short_name;
-					}
-				}
 
 				var marker = new google.maps.Marker({
 						map: map,
@@ -122,7 +89,7 @@ GoogleMapsLoader.load(function (google) {
 					});
 
 				var infoWindow = new google.maps.InfoWindow({
-					content: '<div class="obj-google-maps-infowindow" itemscope itemtype="http://schema.org/LocalBusiness"><p itemprop="name"><strong>' + location.post_title + '</strong></p>' + '<p itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">' + '<span class="street-address" itemprop="streetAddress">' + streetNumber + ' ' + streetName + '</span><br><span class="city-name" itemprop="addressLocality">' + cityName + '</span>, <span class="state-name" itemprop="addressRegion">' + stateName + '</span> <span class="country-name" itemprop="addressCountry">' + countryName + '</span> <span class="zip" itemprop="postalCode">' + zip + '</span></p>' + '<p><a href="' + location.permalink + '" itemprop="url">View ' + location.post_type_label + '</a></p></div>'
+					content: location.content
 				});
 
 				marker.addListener('click', function () {
@@ -152,7 +119,7 @@ GoogleMapsLoader.load(function (google) {
 				var markerLatLng = new google.maps.LatLng({ lat: numLat, lng: numLng }),
 					toCenterDistance = google.maps.geometry.spherical.computeDistanceBetween( center, markerLatLng );
 				console.log(toCenterDistance);
-				
+
 				if ( markerBoundsRange >= toCenterDistance) {
 					markersInBoundsRange.push( markerLatLng );
 				}
