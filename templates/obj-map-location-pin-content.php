@@ -1,4 +1,8 @@
 <div class="obj-google-maps-infowindow" itemscope itemtype="http://schema.org/LocalBusiness">
+  <div itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
+    <meta itemprop="latitude" content="<?php echo $obj_location_lat; ?>" />
+    <meta itemprop="longitude" content="<?php echo $obj_location_lng; ?>" />
+  </div>
   <p itemprop="name"><strong><?php echo $obj_location_post_title; ?></strong></p>
   <p itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
     <span class="street-address" itemprop="streetAddress"><?php echo "$obj_location_street_number $obj_location_route"; ?><?php echo !empty( $obj_location_subpremise ) ? " #$obj_location_subpremise" : ''; ?></span><br />

@@ -78,28 +78,31 @@ class Obj_Gmaps_Public {
 		$locations = array();
 		foreach( $posts as $key => $post ) {
 			$lat = get_post_meta( $post->ID, 'obj_location_lat', true );
+			$lat = filter_var( $lat, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 			$lng = get_post_meta( $post->ID, 'obj_location_lng', true );
+			$lng = filter_var( $lng, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 
 			if ( $lat && $lng ) {
-				$location = new StdClass;
-				$location->lat = $lat;
-				$location->lng = $lng;
-
 				$address_components = get_post_meta( $post->ID, 'obj_location_address_components', true );
-				$template_varables = $this->rekey_address_components_array( $address_components );
-				$template_varables['post_title'] = $posts[$key]->post_title;
-				$template_varables['post_type_label'] = $post_type_object_labels->singular_name;
-				$template_varables['permalink'] = get_the_permalink( $post->ID );
+				$template_variables = $this->rekey_address_components_array( $address_components );
+				$template_variables['lat'] = $lat;
+				$template_variables['lat'] = $lng;
+				$template_variables['post_title'] = $posts[$key]->post_title;
+				$template_variables['post_type_label'] = $post_type_object_labels->singular_name;
+				$template_variables['permalink'] = get_the_permalink( $post->ID );
 
-				extract( $template_varables, EXTR_OVERWRITE|EXTR_PREFIX_ALL, 'obj_location' );
+				extract( $template_variables, EXTR_OVERWRITE|EXTR_PREFIX_ALL, 'obj_location' );
 				ob_start();
 				include "$location_pin_content_template";
 				$location_pin_content = ob_get_clean();
-				foreach( array_keys($template_varables) as $key ) {
+				foreach( array_keys($template_variables) as $key ) {
 					$key = 'obj_location_' . $key;
 					unset($$key);
 				}
-				
+
+				$location = new StdClass;
+				$location->lat = $lat;
+				$location->lng = $lng;
 				$location->content = $location_pin_content;
 
 				$locations[] = $location;
@@ -109,8 +112,8 @@ class Obj_Gmaps_Public {
 		$data_array = array(
 			'apiKey'	=> get_option( 'obj_api_key' ),
 			'mapType'	=> get_option( 'obj_map_type' ),
-			'mapCenterLat' => wp_cache_get( 'obj_map_center_lat' ),
-			'mapCenterLng' => wp_cache_get( 'obj_map_center_lng' ),
+			'mapCenterLat' => filter_var( wp_cache_get( 'obj_map_center_lat' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
+			'mapCenterLng' => filter_var( wp_cache_get( 'obj_map_center_lng' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 			'mapZoom'	=> get_option( 'obj_map_zoom' ),
 			'mapSearch'	=> get_option( 'obj_map_search_by' ),
 			'mapLocationIcon'	=> get_option( 'obj_map_location_icon' ),
