@@ -95,6 +95,11 @@ class Obj_Gmaps_Public {
 				ob_start();
 				include "$location_pin_content_template";
 				$location_pin_content = ob_get_clean();
+				foreach( array_keys($template_varables) as $key ) {
+					$key = 'obj_location_' . $key;
+					unset($$key);
+				}
+				
 				$location->content = $location_pin_content;
 
 				$locations[] = $location;
