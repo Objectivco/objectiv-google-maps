@@ -17,8 +17,11 @@ class Obj_Gmaps_Admin {
 
     public function __construct( $file ) {
 
+		require_once 'class-obj-uibuilder.php';
+
         $this->file = $file;
 		$this->dir = dirname( $file );
+		$this->uibuilder = new Obj_Gmaps_UIBuilder( 'obj_location' );
 
         // Activation and Deactivation Hooks
         register_activation_hook( $file, array( $this, 'activate_plugin' ) );
@@ -27,7 +30,6 @@ class Obj_Gmaps_Admin {
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
 			add_action( 'admin_init', array( $this, 'metaboxes_setup' ) );
-			add_action( 'save_post', array( $this, 'save_location_lat_long' ), 10, 3 );
 		}
 
     }
@@ -73,8 +75,13 @@ class Obj_Gmaps_Admin {
 	 */
 	public function metaboxes_setup () {
 		$selected_post_type = get_option( 'obj_post_type' );
-		add_action( 'add_meta_boxes_' . $selected_post_type, array( $this, 'create_metabox' ), 10, 1 );
-		add_action( 'save_post', array( $this, 'save_metabox' ), 10, 2 );
+		if( !empty($selected_post_type) ) {
+			add_action( 'add_meta_boxes_'.$selected_post_type, array( $this, 'create_metabox' ), 10, 1 );
+			add_action( 'save_post_'.$selected_post_type, array( $this, 'save_post_validate' ), 9, 2 );
+			add_action( 'save_post_'.$selected_post_type, array( $this, 'verify_wp_nonces' ), 10, 2 );
+			add_action( 'save_post_'.$selected_post_type, array( $this, 'save_metabox' ), 11, 1 );
+			add_action( 'save_post_'.$selected_post_type, array( $this, 'save_location_lat_long' ), 12, 1 );
+		}
 	}
 
 	/**
@@ -99,25 +106,79 @@ class Obj_Gmaps_Admin {
 	 * @since 1.0
 	 */
 	public function metabox_content( $object ) {
-		wp_nonce_field( plugin_basename( $this->dir ), 'obj_google_address_nonce' );
-		$data = array();
+		wp_nonce_field( 'obj_google_save', 'obj_google_save_nonce' );
 		?>
-		<p>
-			<label for="autocomplete"><?php _e( "Add the address.", 'obj-google-maps' ); ?></label>
-			<br />
-			<input class="widefat" type="text" name="obj-google-address" id="autocomplete" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
-		</p>
-		<?php
+		<table class="form-table">
+			<tbody>
+				<tr valign="top">
+					<th scope="row">
+						<label for="autocomplete"><?php _e( "Address", 'obj-google-maps' ); ?></label>
+					</th>
+					<td>
+						<input class="widefat" type="text" name="obj-google-address" id="autocomplete" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
+					</td>
+				</tr>
+				<?php
+				$custom_post_meta = array();
+				$custom_post_meta = apply_filters( 'obj_location_post_meta', $custom_post_meta );
+				// Supported field types: date, textbox, url, email, hidden, textarea
+				// TODO: Add support for checkbox, number, and selectbox field types. UI functions exist but the value logic below will not work for them.
+				foreach( $custom_post_meta as $meta_key => $field_array ) {
+					if( empty($field_array['type']) || empty($field_array['label']) 
+						|| !is_callable( array($this->uibuilder, $field_array['type']) ) )
+						continue;
 
+					$meta_value = get_post_meta( $object->ID, $this->uibuilder->get_name_id($meta_key), true );
+					?>
+					<tr valign="top">
+						<th scope="row">
+							<label for="<?php echo $this->uibuilder->get_name_id($meta_key); ?>"><?php _e( $field_array['label'], 'obj-google-maps' ); ?></label>
+						</th>
+						<td>
+							<?php echo $this->uibuilder->{$field_array['type']}( $meta_key, $meta_value, 'widefat' ); ?>
+						</td>
+					</tr>
+					<?php
+				}
+				?>
+			</tbody>
+		</table>
+		<?php
 	}
 
-	function save_location_lat_long( $post_id, $post, $update ) {
+	public function save_post_validate( $post_id, $post ) {
+		if( !$this->is_valid_post_save($post) ) {
+			//Remove post saving actions
+			$post_type = $post->post_type;
+			remove_action( 'save_post_'.$post_type, array( $this, 'verify_wp_nonces' ), 10 );
+			remove_action( 'save_post_'.$post_type, array( $this, 'save_metabox' ), 11 );
+			remove_action( 'save_post_'.$post_type, array( $this, 'save_location_lat_long' ), 12 );
+		}
+	}
 
-	    $post_type = get_post_type($post_id);
+	private function is_valid_post_save($post) {
+		//Check for auto saves, creating a new post, no post array, and unhandled post types
+		if( is_array($post) )
+			$post = (object) $post;
+		if( empty($_POST) 
+			|| 'auto-draft' == $post->post_status
+			|| 'trash' == $post->post_status
+			|| (defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE) )
+			return false;
+		return true;
+	}
 
-	    // If this isn't a 'book' post, don't update it.
-	    if ( get_option( 'obj_post_type' ) != $post_type ) return;
+	public function verify_wp_nonces( $post_id, $post ) {
+		if( !$this->is_valid_post_save($post) )
+			return; //Do nothing
+		
+		if( !isset( $_POST['obj_google_save_nonce'] ) )
+			$this->display_error('verify_nonce', 'Unable to verify security nonce.');
+		
+		check_admin_referer( 'obj_google_save', 'obj_google_save_nonce' );
+	}
 
+	public function save_location_lat_long( $post_id ) {
 	    // - Update the post's metadata.
 	    if ( isset( $_POST['obj-google-address'] ) ) {
 	        $address = $_POST['obj-google-address'];
@@ -144,15 +205,27 @@ class Obj_Gmaps_Admin {
 	 *
 	 * @since 1.0
 	 */
-	public function save_metabox( $post_id, $post ) {
+	public function save_metabox( $post_id ) {
+		//Save location address
+		$obj_google_address = '';
+		if( isset( $_POST['obj-google-address'] ) )
+			$obj_google_address = sanitize_text_field( $_POST['obj-google-address'] );
+		update_post_meta( $post_id, 'obj_google_address', $obj_google_address );
 
-		$selected_post_type = get_option( 'obj_post_type' );
-
-		$new_meta_value = ( isset( $_POST['obj-google-address'] ) ? sanitize_text_field( $_POST['obj-google-address'] ) : '' );
-		$new_place_id_value = ( isset( $_POST['obj-google-address-place-id'] ) ? sanitize_text_field( $_POST['obj-google-address-place-id'] ) : '' );
-		$meta_key = 'obj_google_address';
-		$meta_value = get_post_meta( $post_id, $meta_key, true );
-		update_post_meta( $post_id, $meta_key, $new_meta_value );
+		//Save location post meta
+		$custom_post_meta = array();
+		$custom_post_meta = apply_filters( 'obj_location_post_meta', $custom_post_meta );
+		// Supported field types: date, textbox, url, email, hidden, textarea
+		// TODO: Add support for checkbox, number, and selectbox field types. UI functions exist but the saving logic below will not work for them.
+		foreach( $custom_post_meta as $meta_key => $field_array ) {
+			$meta_value = '';
+			if( isset( $_POST[$this->uibuilder->get_name_id($meta_key)] ) )
+				$meta_value = sanitize_text_field( $_POST[$this->uibuilder->get_name_id($meta_key)] );
+			update_post_meta( $post_id, $this->uibuilder->get_name_id($meta_key), $meta_value );
+		}
 	}
 
+	private function display_error($code, $message) {
+		wp_die( new WP_Error('obj_google_'.$code, 'Objectiv Google Maps: '.$message) );
+	}
 }

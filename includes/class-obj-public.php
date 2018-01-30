@@ -63,7 +63,18 @@ class Obj_Gmaps_Public {
 
 		$posts_arg = array(
 			'post_type'	=> $selected_post_type,
-			'posts_per_page'	=> -1
+			'posts_per_page'	=> -1,
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => 'obj_location_lat',
+					'compare' => 'EXISTS'
+				),
+				array(
+					'key' => 'obj_location_lng',
+					'compare' => 'EXISTS'
+				)
+			)
 		);
 
 		$post_type_object = get_post_type_object( $selected_post_type );
@@ -74,6 +85,9 @@ class Obj_Gmaps_Public {
 		$location_pin_content_template = dirname( __FILE__ ) . '/../templates/obj-map-location-pin-content.php';
 		if( $overridden_template = locate_template( 'obj-map-location-pin-content.php' ) )
 			$location_pin_content_template = $overridden_template;
+
+		$post_meta_to_load = array();
+		$post_meta_to_load = array_keys( apply_filters( 'obj_location_post_meta', $post_meta_to_load ) );
 
 		$locations = array();
 		foreach( $posts as $key => $post ) {
@@ -86,10 +100,14 @@ class Obj_Gmaps_Public {
 				$address_components = get_post_meta( $post->ID, 'obj_location_address_components', true );
 				$template_variables = $this->rekey_address_components_array( $address_components );
 				$template_variables['lat'] = $lat;
-				$template_variables['lat'] = $lng;
+				$template_variables['lng'] = $lng;
 				$template_variables['post_title'] = $posts[$key]->post_title;
+				$template_variables['post_excerpt'] = $posts[$key]->post_excerpt;
 				$template_variables['post_type_label'] = $post_type_object_labels->singular_name;
 				$template_variables['permalink'] = get_the_permalink( $post->ID );
+
+				foreach( $post_meta_to_load as $post_meta_key )
+					$template_variables[$post_meta_key] = get_post_meta( $post->ID, 'obj_location_'.$post_meta_key, true );
 
 				extract( $template_variables, EXTR_OVERWRITE|EXTR_PREFIX_ALL, 'obj_location' );
 				ob_start();
