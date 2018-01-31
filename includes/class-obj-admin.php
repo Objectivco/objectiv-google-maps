@@ -107,9 +107,40 @@ class Obj_Gmaps_Admin {
 	 */
 	public function metabox_content( $object ) {
 		wp_nonce_field( 'obj_google_save', 'obj_google_save_nonce' );
+
+		$lat = get_post_meta( $object->ID, 'obj_location_lat', true );
+		if( empty($lat) )
+			$lat = 'Not set. Marker will not appear on map. Save the post to try geocoding the address again.';
+		$lng = get_post_meta( $object->ID, 'obj_location_lng', true );
+		if( empty($lng) )
+			$lng = 'Not set. Marker will not appear on map. Save the post to try geocoding the address again.';
 		?>
 		<table class="form-table">
 			<tbody>
+				<tr valign="top">
+					<th scope="row">
+						<label for="autocomplete"><?php _e( "Address", 'obj-google-maps' ); ?></label>
+					</th>
+					<td>
+						<input class="widefat" type="text" name="obj-google-address" id="autocomplete" value="<?php echo esc_attr( get_post_meta( $object->ID, 'obj_google_address', true ) ); ?>" size="30" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( "Address Latitude", 'obj-google-maps' ); ?>
+					</th>
+					<td>
+						<?php echo $lat; ?>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( "Address Longitude", 'obj-google-maps' ); ?>
+					</th>
+					<td>
+						<?php echo $lng; ?>
+					</td>
+				</tr>
 				<tr valign="top">
 					<th scope="row">
 						<label for="autocomplete"><?php _e( "Address", 'obj-google-maps' ); ?></label>
