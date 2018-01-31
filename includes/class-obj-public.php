@@ -33,7 +33,7 @@ class Obj_Gmaps_Public {
     public function enqueue_js() {
 
         if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
-            wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array(), $this->version, true );
+            wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array('jquery'), $this->version, true );
 			wp_enqueue_style( 'obj-google-maps-style', plugins_url( '/assets/css/public/public.css', $this->file ), array(), $this->version );
         }
 
@@ -101,8 +101,10 @@ class Obj_Gmaps_Public {
 				$template_variables = $this->rekey_address_components_array( $address_components );
 				$template_variables['lat'] = $lat;
 				$template_variables['lng'] = $lng;
-				$template_variables['post_title'] = $posts[$key]->post_title;
-				$template_variables['post_excerpt'] = $posts[$key]->post_excerpt;
+				$template_variables['post_id'] = $post->ID;
+				$template_variables['post_title'] = trim( $post->post_title );
+				$template_variables['post_excerpt'] = trim( $post->post_excerpt );
+				$template_variables['post_content'] = trim( $post->post_content );
 				$template_variables['post_type_label'] = $post_type_object_labels->singular_name;
 				$template_variables['permalink'] = get_the_permalink( $post->ID );
 
