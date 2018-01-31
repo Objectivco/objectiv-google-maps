@@ -137,6 +137,22 @@ class Obj_Gmaps_UIBuilder {
 		
 		echo $output;
 	}
+
+	/*
+	 * Function name: time
+	 * Purpose: Builds and echos html for a time selector.
+	 * Arguements:
+	 *	-$field_name: Value of name attribute for form submission.
+	 *	-$value: Initial value of the date field.
+	 */
+	public function time($field_name, $value='', $class='' ) {
+		$field_name_id = $this->get_name_id($field_name);
+	
+		$output = '<input type="time" name="'.$field_name_id.'" id="'.$field_name_id.'" '.
+					'value="'.$value.'" pattern="[0-9]{2}:[0-9]{2}" placeholder="HH:MM" class="'.$class.'" />';
+		
+		echo $output;
+	}
 	
 	/*
 	 * Function name: textbox
