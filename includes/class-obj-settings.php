@@ -192,12 +192,22 @@ class Obj_Gmaps_Settings {
 					'type'	=> 'checkbox'
 				),
 				array(
-					'id'	=> 'api_key',
-					'label'	=> __( 'Google API Key', 'obj-google-maps' ),
-					'description'	=> __( 'Enter the Google API key to use this plugin.', 'obj-google-maps' ),
+					'id'	=> 'maps_api_key',
+					'label'	=> __( 'Google Maps Javascript API Key', 'obj-google-maps' ),
+					'description'	=> __( 'Enter the Google Maps Javascript API Key to use this plugin.', 'obj-google-maps' ),
 					'type'	=> 'text',
 					'default'	=> '',
-					'placeholder'	=> __( 'Google API Key', 'obj-google-maps' ),
+					'placeholder'	=> __( 'Google Maps Javascript API Key', 'obj-google-maps' ),
+					'class'	=> 'regular-text',
+					'callback'	=> 'wp_strip_all_tags'
+				),
+				array(
+					'id'	=> 'geocode_api_key',
+					'label'	=> __( 'Google Maps Geocode API Key', 'obj-google-maps' ),
+					'description'	=> __( 'Enter the Google Maps Geocode API Key to use this plugin.', 'obj-google-maps' ),
+					'type'	=> 'text',
+					'default'	=> '',
+					'placeholder'	=> __( 'Google Maps Geocode API Key', 'obj-google-maps' ),
 					'class'	=> 'regular-text',
 					'callback'	=> 'wp_strip_all_tags'
 				)
