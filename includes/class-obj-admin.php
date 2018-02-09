@@ -1,9 +1,6 @@
 <?php
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 /**
  * Main admin class
@@ -14,61 +11,55 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.0
  */
 class Obj_Gmaps_Admin {
+	public function __construct( $file ) {
+		require_once 'class-obj-uibuilder.php';
+		require_once 'class-obj-data-validator.php';
 
-		public function __construct( $file ) {
-			require_once 'class-obj-uibuilder.php';
-			require_once 'class-obj-data-validator.php';
+		$this->file = $file;
+		$this->dir = dirname( $file );
+		$this->uibuilder = new Obj_Gmaps_UIBuilder( 'obj_location' );
+		$this->datavalidator = new Obj_Gmaps_DataValidator();
+		$this->maps_api_key = get_option( 'obj_maps_api_key' );
+		$this->geocode_api_key = get_option( 'obj_geocode_api_key' );
 
-			$this->file = $file;
-			$this->dir = dirname( $file );
-			$this->uibuilder = new Obj_Gmaps_UIBuilder( 'obj_location' );
-			$this->datavalidator = new Obj_Gmaps_DataValidator();
-			$this->maps_api_key = get_option( 'obj_maps_api_key' );
-			$this->geocode_api_key = get_option( 'obj_geocode_api_key' );
+		// Activation and Deactivation Hooks
+		register_activation_hook( $file, array( $this, 'activate_plugin' ) );
+		register_deactivation_hook( $file, array( $this, 'deactivate_plugin' ) );
 
-			// Activation and Deactivation Hooks
-			register_activation_hook( $file, array( $this, 'activate_plugin' ) );
-			register_deactivation_hook( $file, array( $this, 'deactivate_plugin' ) );
-
-			if ( is_admin() ) {
-				add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
-				add_action( 'admin_init', array( $this, 'metaboxes_setup' ) );
-			}
+		if ( is_admin() ) {
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
+			add_action( 'admin_init', array( $this, 'metaboxes_setup' ) );
 		}
-
-    /**
-     * Activation callback
-     */
-    public function activate_plugin() {
-        flush_rewrite_rules();
-    }
-
-    /**
-     * Deactivation Callback
-     */
-    public function deactivate_plugin() {
-        flush_rewrite_rules();
-    }
+	}
 
 	/**
-     * Enqueue JS
-     *
-     * @since 1.0
-     */
-    public function enqueue_js( $hook ) {
+	 * Activation callback
+	 */
+	public function activate_plugin() {
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Deactivation Callback
+	 */
+	public function deactivate_plugin() {
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Enqueue JS
+	 *
+	 * @since 1.0
+	 */
+	public function enqueue_js( $hook ) {
 		$screen = get_current_screen();
 		$selected_post_type = get_option( 'obj_post_type' );
 
-		$data_array = array(
-			'api_key'	=> $this->api_key
-		);
-
 		if ( $hook == 'settings_page_obj_google_map_settings' || $screen->post_type == $selected_post_type ) {
-			wp_enqueue_script( 'obj-google-maps-admin', plugins_url( '/assets/js/admin/build/main.js', $this->file ), array(), $this->version, true );
-			wp_localize_script( 'obj-google-maps-admin', 'data', $data_array );
+			wp_localize_script( 'obj-google-maps-admin', 'objGoogleMapData', array( 'api_key'	=> $this->api_key ) );
+			wp_enqueue_script( 'obj-google-maps-admin', plugins_url( '/assets/js/admin/main.js', $this->file ), false, $this->version, true );
 		}
-
-    }
+	}
 
 	/**
 	 * Register address metabox

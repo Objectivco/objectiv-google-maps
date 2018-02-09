@@ -1,9 +1,6 @@
 <?php
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 /**
  * Settings class
@@ -59,7 +56,7 @@ class Obj_Gmaps_Settings {
 		$screen = get_current_screen();
 
 		if ( $screen->id == 'settings_page_obj_google_map_settings' ) {
-			wp_enqueue_style( 'obj-google-maps-admin-css', plugins_url( '/assets/css/admin/admin.css', $this->file ), array(), $this->version );
+			wp_enqueue_style( 'obj-google-maps-admin-css', plugins_url( '/assets/css/admin/admin.css', $this->file ), false, $this->version );
 		}
 
 	}
@@ -184,12 +181,6 @@ class Obj_Gmaps_Settings {
 						'(regions)'	=> 'Region'
 					),
 					'default'	=> 'address'
-				),
-				array(
-					'id'	=> 'map_location_icon',
-					'label'	=> __( 'Location Icon', 'obj-google-maps' ),
-					'description'	=> __( 'Display an icon on the location that was searched for.' ),
-					'type'	=> 'checkbox'
 				),
 				array(
 					'id'	=> 'maps_api_key',

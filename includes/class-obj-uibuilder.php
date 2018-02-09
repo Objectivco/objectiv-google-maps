@@ -1,5 +1,6 @@
 <?php
-defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 class Obj_Gmaps_UIBuilder {
 	private $name_id_prefix = null;
@@ -202,6 +203,22 @@ class Obj_Gmaps_UIBuilder {
 		echo $output;
 	}
 	
+	/*
+	 * Function name: tel
+	 * Purpose: Builds and echos html for a tel field.
+	 * Arguements:
+	 *	-$field_name: Value of name attribute for form submission.
+	 *	-$value: Initial value of the tel field.
+	 */
+	public function tel($field_name, $value='', $class='', $attrs = '' ) {
+		$field_name_id = $this->get_name_id($field_name);
+	
+		$output = '<input type="tel" name="'.$field_name_id.'" id="'.$field_name_id.'" '.
+					'value="'.$value.'" class="'.$class.'" '.$attrs.' />';
+		
+		echo $output;
+	}
+
 	/*
 	 * Function name: hidden
 	 * Purpose: Builds and echos html for a hidden field.

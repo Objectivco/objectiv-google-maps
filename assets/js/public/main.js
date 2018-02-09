@@ -1,17 +1,36 @@
-(function( $ ) {
+jQuery(document).ready(function($) {
 	(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 	'use strict';
 
 	var GoogleMapsLoader = require('google-maps');
 	var userMarkers = [];
+	var openInfoWindows = [];
+	var activeMarkers = [];
+		
 
-	GoogleMapsLoader.KEY = data.apiKey;
+	GoogleMapsLoader.KEY = objGoogleMapData.apiKey;
 	GoogleMapsLoader.LIBRARIES = ['places', 'geometry'];
 
 	function clearUserMarkers() {
-			for (var i = 0; i < userMarkers.length; i++) {
-					userMarkers[i].setMap(null);
-			}
+		for (var i = 0; i < userMarkers.length; i++) {
+				userMarkers[i].setMap(null);
+		}
+		userMarkers.length = 0; // Empty userMarkers array
+	}
+
+	function closeInfoWindows() {
+		for (var i = 0; i < openInfoWindows.length; i++) {
+				openInfoWindows[i].close();
+		}
+		openInfoWindows.length = 0; // Empty openInfoWindows array
+	}
+
+	function resetActiveMarkers() {
+		for (var i = 0; i < activeMarkers.length; i++) {
+				activeMarkers[i].setIcon(objGoogleMapData.locationIcon);
+				activeMarkers[i].setZIndex(undefined);
+		}
+		activeMarkers.length = 0; // Empty activeMarkers array
 	}
 
 	GoogleMapsLoader.load(function (google) {
@@ -21,35 +40,38 @@
 			var el = document.getElementById('obj-google-maps');
 			var input = document.getElementById('obj-search-input');
 			var searchBox = new google.maps.places.SearchBox(input);
-			var locations = data.locations;
-			var userIcon = 'https://maps.google.com/mapfiles/ms/micons/man.png';
+			var locations = objGoogleMapData.locations;
+			var userIcon = objGoogleMapData.userIcon;
+			var locationIcon = objGoogleMapData.locationIcon;
+			var activeLocationIcon = objGoogleMapData.activeLocationIcon;
+			var spiderLocationIcon = objGoogleMapData.spiderLocationIcon;
 			var options = {
-					zoom: parseInt(data.mapZoom),
-					mapTypeId: data.mapType,
-			center: new google.maps.LatLng(data.mapCenterLat, data.mapCenterLng)
+				zoom: parseInt(objGoogleMapData.mapZoom),
+				mapTypeId: objGoogleMapData.mapType,
+				center: new google.maps.LatLng(objGoogleMapData.mapCenterLat, objGoogleMapData.mapCenterLng),
+				streetViewControl: false
 			};
 
 			/**
 			* When a city has been selected pan and zoom to the center
 			*/
 			function onPlaceChanged() {
-					var place = autocomplete.getPlace();
-					if (place.geometry) {
-							clearUserMarkers();
-							map.panTo(place.geometry.location);
-							map.setZoom(options.zoom);
+				var place = autocomplete.getPlace();
+				if (place.geometry) {
+					clearUserMarkers();
+					closeInfoWindows();
+					map.panTo(place.geometry.location);
+					map.setZoom(options.zoom);
 
-							var marker = new google.maps.Marker({
-									map: map,
-									position: { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() },
-									icon: userIcon
-							});
-							userMarkers.push(marker);
+					var marker = new google.maps.Marker({
+							map: map,
+							position: { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() },
+							icon: userIcon
+					});
+					userMarkers.push(marker);
 
-							fitMapBounds( new google.maps.LatLng( place.geometry.location.lat(), place.geometry.location.lng() ) );
-					} else {
-							input.placeholder = 'Search by city...';
-					}
+					fitMapBounds( new google.maps.LatLng( place.geometry.location.lat(), place.geometry.location.lng() ) );
+				}
 			}
 
 		function loadMap() {
@@ -67,13 +89,20 @@
 			// set up the google places autocomplete restricted to cities
 			autocomplete = new google.maps.places.Autocomplete(
 			/** @type {!HTMLInputElement} */document.getElementById('obj-search-input'), {
-				types: [data.mapSearch]
+				types: [objGoogleMapData.mapSearch]
 			});
 
 			places = new google.maps.places.PlacesService(map);
 
 			// add listener to run onPlaceChanged when a city has been selected
 			autocomplete.addListener('place_changed', onPlaceChanged);
+
+			// Setup Overlapping Marker Spiderfier
+			var oms = new OverlappingMarkerSpiderfier(map, { 
+				markersWontMove: true,   // we promise not to move any markers, allowing optimizations
+				markersWontHide: true,   // we promise not to change visibility of any markers, allowing optimizations
+				basicFormatEvents: true  // allow the library to skip calculating advanced formatting information
+			});
 
 			// Loop through locations and add the markers
 			locations.forEach(function (location) {
@@ -86,7 +115,9 @@
 
 					var marker = new google.maps.Marker({
 							map: map,
-							position: { lat: numLat, lng: numLng }
+							position: { lat: numLat, lng: numLng },
+							icon: locationIcon,
+							title: location.title
 						});
 					var infoWindowContentNode = document.createElement('div');
 					infoWindowContentNode.className = 'obj-maps-location-pin-content';
@@ -99,14 +130,42 @@
 						$('body').trigger('objMap:infowindowDomready', infoWindowContentNode);
 					});
 
-					marker.addListener('click', function () {
-						infoWindow.open(map, marker);
+					infoWindow.addListener('closeclick', function(){
+						closeInfoWindows();
+						resetActiveMarkers();
 					});
+
+					marker.addListener('spider_click', function () {
+						marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+						marker.setIcon(activeLocationIcon);
+						infoWindow.open(map, marker);
+						openInfoWindows.push(infoWindow);
+						activeMarkers.push(marker);
+					});
+					
+					marker.addListener('click', function(){
+						closeInfoWindows();
+						resetActiveMarkers();
+					});
+
+					marker.addListener('spider_format', function(status){
+						if( status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED )
+							marker.setIcon(spiderLocationIcon);
+						else
+							marker.setIcon(locationIcon);
+					});
+
+					oms.trackMarker(marker);
 				}
 			});
 
 			google.maps.event.addListenerOnce(map, 'idle', function(){
 				fitMapBounds( options.center );
+			});
+
+			google.maps.event.addListener(map, 'click', function(){
+				closeInfoWindows();
+				resetActiveMarkers();
 			});
 		}
 
@@ -388,4 +447,4 @@
 	});
 
 	},{}]},{},[1]);
-})( jQuery );
+});

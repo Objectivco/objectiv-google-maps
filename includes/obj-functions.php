@@ -1,4 +1,6 @@
 <?php
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 /**
  * Check to see if page has a shortcode
@@ -8,7 +10,6 @@
  * @since 1.0
  */
 function obj_has_shortcode( $shortcode = '' ) {
-
     global $post;
     $post_obj = get_post( $post->ID );
     $found = false;
@@ -20,5 +21,4 @@ function obj_has_shortcode( $shortcode = '' ) {
         $found = true;
 
     return $found;
-
 }

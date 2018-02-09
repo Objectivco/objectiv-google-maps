@@ -1,9 +1,6 @@
 <?php
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 /**
  * Public Views class
@@ -15,47 +12,42 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Obj_Gmaps_Public {
 
-    public function __construct( $file, $version ) {
+	public function __construct( $file, $version ) {
+		$this->file = $file;
+		$this->version = $version;
 
-        $this->file = $file;
-        $this->version = $version;
-
-        add_action( 'init', array( $this, 'add_map_shortcode' ) );
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ) );
-
-    }
+		add_action( 'init', array( $this, 'add_map_shortcode' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ) );
+	}
 
 	/**
-     * Enqueue JS
-     *
-     * @since 1.0
-     */
-    public function enqueue_js() {
-
-        if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
-            wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array('jquery'), $this->version, true );
+	 * Enqueue JS
+	 *
+	 * @since 1.0
+	 */
+	public function enqueue_js() {
+		if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
+			wp_enqueue_script( 'obj-google-maps-oms', plugins_url( '/assets/js/public/oms.min.js', $this->file ), false, $this->version );
+			wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/public/main.js', $this->file ), array('jquery', 'obj-google-maps-oms'), $this->version, true );
 			wp_enqueue_style( 'obj-google-maps-style', plugins_url( '/assets/css/public/public.css', $this->file ), array(), $this->version );
-        }
+		}
+	}
 
-    }
+	/**
+	 * Add map shortcode
+	 *
+	 * @since 1.0
+	 */
+	public function add_map_shortcode() {
+		add_shortcode( 'objectiv_google_maps', array( $this, 'map_shortcode_markup' ) );
+	}
 
-    /**
-     * Add map shortcode
-     *
-     * @since 1.0
-     */
-    public function add_map_shortcode() {
-
-        add_shortcode( 'objectiv_google_maps', array( $this, 'map_shortcode_markup' ) );
-
-    }
-
-    /**
-     * Create Map Shortcode Markup
-     *
-     * @since 1.0
-     */
-    public function map_shortcode_markup() {
+	/**
+	 * Create Map Shortcode Markup
+	 *
+	 * @since 1.0
+	 */
+	public function map_shortcode_markup() {
 		$selected_post_type = get_option( 'obj_post_type' );
 		$height = get_option( 'obj_map_height' );
 		$search_by = get_option( 'obj_map_search_by' );
@@ -123,6 +115,7 @@ class Obj_Gmaps_Public {
 				$location = new StdClass;
 				$location->lat = $lat;
 				$location->lng = $lng;
+				$location->title = htmlspecialchars( trim( $post->post_title ) );
 				$location->content = $location_pin_content;
 
 				$locations[] = $location;
@@ -136,7 +129,10 @@ class Obj_Gmaps_Public {
 			'mapCenterLng' => filter_var( wp_cache_get( 'obj_map_center_lng' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 			'mapZoom'	=> get_option( 'obj_map_zoom' ),
 			'mapSearch'	=> get_option( 'obj_map_search_by' ),
-			'mapLocationIcon'	=> get_option( 'obj_map_location_icon' ),
+			'userIcon' => plugins_url( '/assets/images/pegman.png', $this->file ),
+			'locationIcon' => plugins_url( '/assets/images/dot_pinlet.png', $this->file ),
+			'spiderLocationIcon' => plugins_url( '/assets/images/dot_pinlet_spider.png', $this->file ),
+			'activeLocationIcon' => plugins_url( '/assets/images/spotlight_pin.png', $this->file ),
 			'locations'	=> $locations
 		);
 
@@ -146,7 +142,7 @@ class Obj_Gmaps_Public {
 		}
 
 		if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
-			wp_localize_script( 'obj-google-maps', 'data', $data_array );
+			wp_localize_script( 'obj-google-maps', 'objGoogleMapData', $data_array );
 		}
 
 		if ( $search_by == 'geocode' ) {
@@ -162,16 +158,15 @@ class Obj_Gmaps_Public {
 		}
 
 
-        ob_start();
+		ob_start();
 
 		echo '<div id="obj-google-map-wrap">';
 		echo '<input id="obj-search-input" class="controls" type="text" placeholder="' . $placeholder . '">';
-        echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
+		echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
 		echo '</div>';
 
-        return ob_get_clean();
-
-    }
+		return ob_get_clean();
+	}
 
 	private function update_center_lat_long_cache( &$data_array ) {
 		$string = str_replace (" ", "+", urlencode( $data_array['mapCenter'] ) );

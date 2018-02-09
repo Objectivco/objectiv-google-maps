@@ -1,5 +1,6 @@
 <?php
-defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 class Obj_Gmaps_DataValidator {
 	private static $var_filters = null;
