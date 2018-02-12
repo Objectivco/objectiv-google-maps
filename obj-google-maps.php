@@ -3,7 +3,7 @@
 Plugin Name: Objectiv Google Maps
 Plugin URI:  http://objectiv.co
 Description: Create searchable Google maps
-Version:     1.2
+Version:     2.0
 Author:      Objectiv, Matthew Sigley
 Author URI:  http://objectiv.co
 License:     GPL2
@@ -24,18 +24,23 @@ You should have received a copy of the GNU General Public License
 along with Objectiv Google Maps. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
+
+class Obj_Gmaps {
+
+	function __construct () {
+    require_once 'includes/class-obj-admin.php';
+    require_once 'includes/class-obj-settings.php';
+    require_once 'includes/class-obj-public.php';
+    require_once 'includes/obj-functions.php';
+
+		$this->version = 2.0;
+    $this->obj_admin = new Obj_Gmaps_Admin( __FILE__ );
+    $this->obj_settings = new Obj_Gmaps_Settings( __FILE__, $version );
+    $this->obj_public = new Obj_Gmaps_Public( __FILE__, $version );
+	}
 }
 
-$version = 1.1;
+$Obj_Gmaps = new Obj_Gmaps();
 
-require_once( 'includes/class-obj-admin.php' );
-require_once( 'includes/class-obj-settings.php' );
-require_once( 'includes/class-obj-public.php' );
-require_once( 'includes/obj-functions.php' );
-
-global $obj_admin, $obj_settings, $obj_public;
-$obj_admin = new Obj_Gmaps_Admin( __FILE__ );
-$obj_settings = new Obj_Gmaps_Settings( __FILE__, $version );
-$obj_public = new Obj_Gmaps_Public( __FILE__, $version );

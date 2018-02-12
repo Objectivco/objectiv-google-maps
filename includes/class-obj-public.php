@@ -1,9 +1,6 @@
 <?php
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 /**
  * Public Views class
@@ -15,47 +12,42 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Obj_Gmaps_Public {
 
-    public function __construct( $file, $version ) {
+	public function __construct( $file, $version ) {
+		$this->file = $file;
+		$this->version = $version;
 
-        $this->file = $file;
-        $this->version = $version;
-
-        add_action( 'init', array( $this, 'add_map_shortcode' ) );
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ) );
-
-    }
+		add_action( 'init', array( $this, 'add_map_shortcode' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ) );
+	}
 
 	/**
-     * Enqueue JS
-     *
-     * @since 1.0
-     */
-    public function enqueue_js() {
-
-        if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
-            wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/build/main.js', $this->file ), array(), $this->version, true );
+	 * Enqueue JS
+	 *
+	 * @since 1.0
+	 */
+	public function enqueue_js() {
+		if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
+			wp_enqueue_script( 'obj-google-maps-oms', plugins_url( '/assets/js/public/oms.min.js', $this->file ), false, $this->version );
+			wp_enqueue_script( 'obj-google-maps', plugins_url( '/assets/js/public/main.js', $this->file ), array('jquery', 'obj-google-maps-oms'), $this->version, true );
 			wp_enqueue_style( 'obj-google-maps-style', plugins_url( '/assets/css/public/public.css', $this->file ), array(), $this->version );
-        }
+		}
+	}
 
-    }
+	/**
+	 * Add map shortcode
+	 *
+	 * @since 1.0
+	 */
+	public function add_map_shortcode() {
+		add_shortcode( 'objectiv_google_maps', array( $this, 'map_shortcode_markup' ) );
+	}
 
-    /**
-     * Add map shortcode
-     *
-     * @since 1.0
-     */
-    public function add_map_shortcode() {
-
-        add_shortcode( 'objectiv_google_maps', array( $this, 'map_shortcode_markup' ) );
-
-    }
-
-    /**
-     * Create Map Shortcode Markup
-     *
-     * @since 1.0
-     */
-    public function map_shortcode_markup() {
+	/**
+	 * Create Map Shortcode Markup
+	 *
+	 * @since 1.0
+	 */
+	public function map_shortcode_markup() {
 		$selected_post_type = get_option( 'obj_post_type' );
 		$height = get_option( 'obj_map_height' );
 		$search_by = get_option( 'obj_map_search_by' );
@@ -63,7 +55,18 @@ class Obj_Gmaps_Public {
 
 		$posts_arg = array(
 			'post_type'	=> $selected_post_type,
-			'posts_per_page'	=> -1
+			'posts_per_page'	=> -1,
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => 'obj_location_lat',
+					'compare' => 'EXISTS'
+				),
+				array(
+					'key' => 'obj_location_lng',
+					'compare' => 'EXISTS'
+				)
+			)
 		);
 
 		$post_type_object = get_post_type_object( $selected_post_type );
@@ -71,31 +74,67 @@ class Obj_Gmaps_Public {
 
 		$posts = get_posts( $posts_arg );
 
+		$location_pin_content_template = dirname( __FILE__ ) . '/../templates/obj-map-location-pin-content.php';
+		if( $overridden_template = locate_template( 'obj-map-location-pin-content.php' ) )
+			$location_pin_content_template = $overridden_template;
+
+		$post_meta_to_load = array();
+		$post_meta_to_load = array_keys( apply_filters( 'obj_location_post_meta', $post_meta_to_load ) );
+
+		$locations = array();
 		foreach( $posts as $key => $post ) {
 			$lat = get_post_meta( $post->ID, 'obj_location_lat', true );
+			$lat = filter_var( $lat, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 			$lng = get_post_meta( $post->ID, 'obj_location_lng', true );
+			$lng = filter_var( $lng, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 
 			if ( $lat && $lng ) {
-				$posts[$key]->lat = $lat;
-				$posts[$key]->lng = $lng;
-				$posts[$key]->permalink = get_the_permalink( $post->ID );
-				$posts[$key]->post_type_label = $post_type_object_labels->singular_name;
-				$posts[$key]->address = get_post_meta( $post->ID, 'obj_google_address', true );
-				$posts[$key]->address_components = get_post_meta( $post->ID, 'obj_location_address_components', true );
+				$address_components = get_post_meta( $post->ID, 'obj_location_address_components', true );
+				$template_variables = $this->rekey_address_components_array( $address_components );
+				$template_variables['lat'] = $lat;
+				$template_variables['lng'] = $lng;
+				$template_variables['post_id'] = $post->ID;
+				$template_variables['post_title'] = trim( $post->post_title );
+				$template_variables['post_excerpt'] = trim( $post->post_excerpt );
+				$template_variables['post_content'] = trim( $post->post_content );
+				$template_variables['post_type_label'] = $post_type_object_labels->singular_name;
+				$template_variables['permalink'] = get_the_permalink( $post->ID );
+
+				foreach( $post_meta_to_load as $post_meta_key )
+					$template_variables[$post_meta_key] = get_post_meta( $post->ID, 'obj_location_'.$post_meta_key, true );
+
+				extract( $template_variables, EXTR_OVERWRITE|EXTR_PREFIX_ALL, 'obj_location' );
+				ob_start();
+				include "$location_pin_content_template";
+				$location_pin_content = ob_get_clean();
+				foreach( array_keys($template_variables) as $key ) {
+					$key = 'obj_location_' . $key;
+					unset($$key);
+				}
+
+				$location = new StdClass;
+				$location->lat = $lat;
+				$location->lng = $lng;
+				$location->title = htmlspecialchars( trim( $post->post_title ) );
+				$location->content = $location_pin_content;
+
+				$locations[] = $location;
 			}
 		}
 
 		$data_array = array(
-			'apiKey'	=> get_option( 'obj_api_key' ),
+			'apiKey'	=> get_option( 'obj_maps_api_key' ),
 			'mapType'	=> get_option( 'obj_map_type' ),
-			'mapCenter'	=> get_option( 'obj_map_center' ),
-			'mapCenterAddressCompnents' => wp_cache_get( 'obj_map_center_address_components' ),
-			'mapCenterLat' => wp_cache_get( 'obj_map_center_lat' ),
-			'mapCenterLng' => wp_cache_get( 'obj_map_center_lng' ),
+			'mapCenter' => get_option( 'obj_map_center' ),
+			'mapCenterLat' => filter_var( wp_cache_get( 'obj_map_center_lat' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
+			'mapCenterLng' => filter_var( wp_cache_get( 'obj_map_center_lng' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 			'mapZoom'	=> get_option( 'obj_map_zoom' ),
 			'mapSearch'	=> get_option( 'obj_map_search_by' ),
-			'mapLocationIcon'	=> get_option( 'obj_map_location_icon' ),
-			'locations'	=> $posts
+			'userIcon' => plugins_url( '/assets/images/pegman.png', $this->file ),
+			'locationIcon' => plugins_url( '/assets/images/dot_pinlet.png', $this->file ),
+			'spiderLocationIcon' => plugins_url( '/assets/images/dot_pinlet_spider.png', $this->file ),
+			'activeLocationIcon' => plugins_url( '/assets/images/spotlight_pin.png', $this->file ),
+			'locations'	=> $locations
 		);
 
 		if( !empty( $data_array['mapCenter'] ) 
@@ -104,7 +143,7 @@ class Obj_Gmaps_Public {
 		}
 
 		if ( obj_has_shortcode( 'objectiv_google_maps' ) ) {
-			wp_localize_script( 'obj-google-maps', 'data', $data_array );
+			wp_localize_script( 'obj-google-maps', 'objGoogleMapData', $data_array );
 		}
 
 		if ( $search_by == 'geocode' ) {
@@ -120,16 +159,15 @@ class Obj_Gmaps_Public {
 		}
 
 
-        ob_start();
+		ob_start();
 
 		echo '<div id="obj-google-map-wrap">';
-		echo '<input id="obj-search-input" class="controls" type="text" placeholder="' . $placeholder . '">';
-        echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
+		echo '<input id="obj-search-input" class="controls" type="text" placeholder="' . $placeholder . '" />';
+		echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
 		echo '</div>';
 
-        return ob_get_clean();
-
-    }
+		return ob_get_clean();
+	}
 
 	private function update_center_lat_long_cache( &$data_array ) {
 		$string = str_replace (" ", "+", urlencode( $data_array['mapCenter'] ) );
@@ -143,12 +181,24 @@ class Obj_Gmaps_Public {
 			$geometry = $output->results[0]->geometry;
 			$longitude = $geometry->location->lng;
 			$latitude = $geometry->location->lat;
-			wp_cache_set( 'obj_map_center_address_components', $address_components );
 			wp_cache_set( 'obj_map_center_lat', $latitude );
 			wp_cache_set( 'obj_map_center_lng', $longitude );
-			$data_array['mapCenterAddressCompnents'] = $address_components;
 			$data_array['mapCenterLat'] = $latitude;
 			$data_array['mapCenterLng'] = $longitude;
 		}
+	}
+
+	private function rekey_address_components_array( $raw_address_components ) {
+		$address_components = array();
+		foreach( $raw_address_components as $component ) {
+			$key = $component->types[0];
+			$value = $component->long_name;
+			if( !empty( $component->short_name ) )
+				$value = $component->short_name;
+			
+			$address_components[$key] = $value;
+		}
+
+		return $address_components;
 	}
 }

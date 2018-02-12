@@ -1,9 +1,6 @@
 <?php
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+// Prevent direct access
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 
 /**
  * Settings class
@@ -59,7 +56,7 @@ class Obj_Gmaps_Settings {
 		$screen = get_current_screen();
 
 		if ( $screen->id == 'settings_page_obj_google_map_settings' ) {
-			wp_enqueue_style( 'obj-google-maps-admin-css', plugins_url( '/assets/css/admin/admin.css', $this->file ), array(), $this->version );
+			wp_enqueue_style( 'obj-google-maps-admin-css', plugins_url( '/assets/css/admin/admin.css', $this->file ), false, $this->version );
 		}
 
 	}
@@ -186,18 +183,22 @@ class Obj_Gmaps_Settings {
 					'default'	=> 'address'
 				),
 				array(
-					'id'	=> 'map_location_icon',
-					'label'	=> __( 'Location Icon', 'obj-google-maps' ),
-					'description'	=> __( 'Display an icon on the location that was searched for.' ),
-					'type'	=> 'checkbox'
-				),
-				array(
-					'id'	=> 'api_key',
-					'label'	=> __( 'Google API Key', 'obj-google-maps' ),
-					'description'	=> __( 'Enter the Google API key to use this plugin.', 'obj-google-maps' ),
+					'id'	=> 'maps_api_key',
+					'label'	=> __( 'Google Maps Javascript API Key', 'obj-google-maps' ),
+					'description'	=> __( 'Enter the Google Maps Javascript API Key to use this plugin.', 'obj-google-maps' ),
 					'type'	=> 'text',
 					'default'	=> '',
-					'placeholder'	=> __( 'Google API Key', 'obj-google-maps' ),
+					'placeholder'	=> __( 'Google Maps Javascript API Key', 'obj-google-maps' ),
+					'class'	=> 'regular-text',
+					'callback'	=> 'wp_strip_all_tags'
+				),
+				array(
+					'id'	=> 'geocode_api_key',
+					'label'	=> __( 'Google Maps Geocode API Key', 'obj-google-maps' ),
+					'description'	=> __( 'Enter the Google Maps Geocode API Key to use this plugin.', 'obj-google-maps' ),
+					'type'	=> 'text',
+					'default'	=> '',
+					'placeholder'	=> __( 'Google Maps Geocode API Key', 'obj-google-maps' ),
 					'class'	=> 'regular-text',
 					'callback'	=> 'wp_strip_all_tags'
 				)
