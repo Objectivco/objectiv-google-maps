@@ -125,6 +125,7 @@ class Obj_Gmaps_Public {
 		$data_array = array(
 			'apiKey'	=> get_option( 'obj_maps_api_key' ),
 			'mapType'	=> get_option( 'obj_map_type' ),
+			'mapCenter' => get_option( 'obj_map_center' ),
 			'mapCenterLat' => filter_var( wp_cache_get( 'obj_map_center_lat' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 			'mapCenterLng' => filter_var( wp_cache_get( 'obj_map_center_lng' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 			'mapZoom'	=> get_option( 'obj_map_zoom' ),
@@ -180,10 +181,8 @@ class Obj_Gmaps_Public {
 			$geometry = $output->results[0]->geometry;
 			$longitude = $geometry->location->lng;
 			$latitude = $geometry->location->lat;
-			wp_cache_set( 'obj_map_center_address_components', $address_components );
 			wp_cache_set( 'obj_map_center_lat', $latitude );
 			wp_cache_set( 'obj_map_center_lng', $longitude );
-			$data_array['mapCenterAddressCompnents'] = $address_components;
 			$data_array['mapCenterLat'] = $latitude;
 			$data_array['mapCenterLng'] = $longitude;
 		}
