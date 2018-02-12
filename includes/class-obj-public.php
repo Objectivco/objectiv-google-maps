@@ -123,7 +123,7 @@ class Obj_Gmaps_Public {
 		}
 
 		$data_array = array(
-			'apiKey'	=> get_option( 'obj_api_key' ),
+			'apiKey'	=> get_option( 'obj_maps_api_key' ),
 			'mapType'	=> get_option( 'obj_map_type' ),
 			'mapCenterLat' => filter_var( wp_cache_get( 'obj_map_center_lat' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 			'mapCenterLng' => filter_var( wp_cache_get( 'obj_map_center_lng' ), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
@@ -161,7 +161,7 @@ class Obj_Gmaps_Public {
 		ob_start();
 
 		echo '<div id="obj-google-map-wrap">';
-		echo '<input id="obj-search-input" class="controls" type="text" placeholder="' . $placeholder . '">';
+		echo '<input id="obj-search-input" class="controls" type="text" placeholder="' . $placeholder . '" />';
 		echo '<div id="obj-google-maps" style="height:' . $height . ';"></div>';
 		echo '</div>';
 
